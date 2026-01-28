@@ -9,6 +9,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator docs {
+  provider = "prisma-docs-generator"
+  output   = "../public/prisma-docs"
+}
+
 // -----------------------------------------------------------------------------
 // ENUMS
 // -----------------------------------------------------------------------------

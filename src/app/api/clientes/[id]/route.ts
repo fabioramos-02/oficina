@@ -5,6 +5,35 @@ interface Contexto {
   params: { id: string };
 }
 
+/**
+ * @swagger
+ * /api/clientes/{id}:
+ *   get:
+ *     summary: Obtém um cliente pelo ID
+ *     description: Retorna os detalhes de um cliente específico.
+ *     tags: [Clientes]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cliente
+ *     responses:
+ *       200:
+ *         description: Cliente encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Cliente'
+ *       404:
+ *         description: Cliente não encontrado.
+ *       500:
+ *         description: Erro interno do servidor.
+ */
 export async function GET(request: Request, context: Contexto) {
   try {
     const { id } = context.params;
@@ -15,6 +44,50 @@ export async function GET(request: Request, context: Contexto) {
   }
 }
 
+/**
+ * @swagger
+ * /api/clientes/{id}:
+ *   put:
+ *     summary: Atualiza um cliente
+ *     description: Atualiza os dados de um cliente existente.
+ *     tags: [Clientes]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cliente
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               telefone:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               endereco:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cliente atualizado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Cliente'
+ *       400:
+ *         description: Erro na atualização.
+ *       404:
+ *         description: Cliente não encontrado.
+ */
 export async function PUT(request: Request, context: Contexto) {
   try {
     const { id } = context.params;
@@ -26,6 +99,38 @@ export async function PUT(request: Request, context: Contexto) {
   }
 }
 
+/**
+ * @swagger
+ * /api/clientes/{id}:
+ *   delete:
+ *     summary: Remove um cliente
+ *     description: Remove um cliente do sistema pelo ID.
+ *     tags: [Clientes]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID do cliente
+ *     responses:
+ *       200:
+ *         description: Cliente removido com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensagem:
+ *                   type: string
+ *       400:
+ *         description: Erro ao remover cliente.
+ *       404:
+ *         description: Cliente não encontrado.
+ */
 export async function DELETE(request: Request, context: Contexto) {
   try {
     const { id } = context.params;

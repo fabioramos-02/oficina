@@ -1,6 +1,29 @@
 import { NextResponse } from 'next/server';
 import { registrarUsuario } from '@/services/authServico';
 
+/**
+ * @swagger
+ * /api/auth/registro:
+ *   post:
+ *     summary: Registro de novo usuário
+ *     description: Cria uma nova conta de usuário no sistema.
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       201:
+ *         description: Usuário registrado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         description: Dados inválidos ou usuário já existe.
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();

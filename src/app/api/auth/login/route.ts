@@ -1,6 +1,31 @@
 import { NextResponse } from 'next/server';
 import { loginUsuario } from '@/services/authServico';
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Autenticação de usuário
+ *     description: Realiza o login do usuário e retorna um token JWT.
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         description: E-mail e senha são obrigatórios.
+ *       401:
+ *         description: Credenciais inválidas.
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
