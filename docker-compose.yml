@@ -1,19 +1,38 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:16
-    container_name: oficina_postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: oficina_db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oficina-app
+    restart: always
     ports:
-      - '5432:5432'
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://oficina:oficina123@db:5432/oficina?schema=public
+      - JWT_SECRET=sua_chave_secreta_aqui
+    depends_on:
+      - db
+    networks:
+      - oficina-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: oficina-db
+    restart: always
+    environment:
+      - POSTGRES_USER=oficina
+      - POSTGRES_PASSWORD=oficina123
+      - POSTGRES_DB=oficina
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - oficina-network
 
 volumes:
   postgres_data:
-    driver: local
+
+networks:
+  oficina-network:
+    driver: bridge
