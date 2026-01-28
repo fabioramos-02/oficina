@@ -18,7 +18,7 @@ Este documento descreve a arquitetura de alto nível (Nível de Containers do Mo
 O diagrama a seguir ilustra os principais containers de software que compõem o sistema e como eles interagem.
 
 
-```
+```mermaid
 C4Context
     title Diagrama de Containers - Sistema de Gestão de Oficina Mecânica
 
