@@ -10,7 +10,7 @@ generator client {
 }
 
 generator docs {
-  provider = "prisma-docs-generator"
+  provider = "node node_modules/prisma-docs-generator/dist/index.js"
   output   = "../public/prisma-docs"
 }
 
