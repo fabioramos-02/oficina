@@ -1,0 +1,146 @@
+// Arquivo de Modelagem de Dados para o Prisma
+// Este arquivo deve ser colocado no diretório 'prisma' do seu projeto backend.
+
+datasource db {
+  provider = "postgresql" // Ou "mysql", dependendo da sua escolha
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum StatusLicenca {
+  ATIVA
+  INATIVA
+  EXPIRADA
+}
+
+enum StatusOrdemServico {
+  ABERTA
+  EM_ANDAMENTO
+  AGUARDANDO_PECA
+  FINALIZADA
+  CANCELADA
+}
+
+enum FuncaoUsuario {
+  ADMIN
+  OPERADOR
+}
+
+// -----------------------------------------------------------------------------
+// MODELS
+// -----------------------------------------------------------------------------
+
+model Licenca {
+  id         String        @id @default(uuid())
+  status     StatusLicenca @default(ATIVA)
+  dataInicio DateTime      @default(now())
+  dataFim    DateTime
+  
+  usuarios   Usuario[]
+}
+
+model Usuario {
+  id        String        @id @default(uuid())
+  email     String        @unique
+  hashSenha String
+  funcao    FuncaoUsuario @default(OPERADOR)
+  
+  licencaId String
+  licenca   Licenca       @relation(fields: [licencaId], references: [id])
+}
+
+model Cliente {
+  id            String         @id @default(uuid())
+  nome          String
+  telefone      String?
+  email         String?
+  endereco      String?
+  
+  veiculos      Veiculo[]
+  ordensServico OrdemServico[]
+}
+
+model Veiculo {
+  id            String         @id @default(uuid())
+  placa         String         @unique
+  marca         String
+  modelo        String
+  ano           Int?
+  
+  clienteId     String
+  cliente       Cliente        @relation(fields: [clienteId], references: [id])
+  
+  ordensServico OrdemServico[]
+}
+
+model OrdemServico {
+  id         String             @id @default(uuid())
+  status     StatusOrdemServico @default(ABERTA)
+  dataInicio DateTime           @default(now())
+  dataFim    DateTime?
+  valorTotal Float              @default(0.0)
+  
+  clienteId  String
+  cliente    Cliente            @relation(fields: [clienteId], references: [id])
+  
+  veiculoId  String
+  veiculo    Veiculo            @relation(fields: [veiculoId], references: [id])
+  
+  pecas      OrdemServicoPeca[]
+  servicos   OrdemServicoServico[]
+}
+
+model Peca {
+  id                String             @id @default(uuid())
+  nome              String
+  codigo            String             @unique
+  precoCusto        Float
+  precoVenda        Float
+  quantidadeEstoque Int
+  
+  ordemServicoPecas OrdemServicoPeca[]
+}
+
+model Servico {
+  id                   String                @id @default(uuid())
+  nome                 String
+  preco                Float
+  
+  ordemServicoServicos OrdemServicoServico[]
+}
+
+// Tabela de ligação N:M para Peças em uma OS
+model OrdemServicoPeca {
+  id             String       @id @default(uuid())
+  quantidade     Int
+  precoUnitario  Float        // Preço da peça no momento da OS (para histórico)
+  
+  ordemServicoId String
+  ordemServico   OrdemServico @relation(fields: [ordemServicoId], references: [id])
+  
+  pecaId         String
+  peca           Peca         @relation(fields: [pecaId], references: [id])
+  
+  @@unique([ordemServicoId, pecaId]) // Garante que uma peça só pode ser adicionada uma vez por OS
+}
+
+// Tabela de ligação N:M para Serviços em uma OS
+model OrdemServicoServico {
+  id             String       @id @default(uuid())
+  quantidade     Int          @default(1)
+  precoUnitario  Float        // Preço do serviço no momento da OS (para histórico)
+  
+  ordemServicoId String
+  ordemServico   OrdemServico @relation(fields: [ordemServicoId], references: [id])
+  
+  servicoId      String
+  servico        Servico      @relation(fields: [servicoId], references: [id])
+  
+  @@unique([ordemServicoId, servicoId]) // Garante que um serviço só pode ser adicionado uma vez por OS
+}
