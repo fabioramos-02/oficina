@@ -62,6 +62,17 @@ export const getApiDocs = async () => {
               clienteId: { type: 'string', format: 'uuid' },
             },
           },
+          Peca: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              nome: { type: 'string' },
+              codigo: { type: 'string' },
+              precoCusto: { type: 'number', format: 'float' },
+              precoVenda: { type: 'number', format: 'float' },
+              quantidadeEstoque: { type: 'integer' },
+            },
+          },
           OrdemServico: {
             type: 'object',
             properties: {

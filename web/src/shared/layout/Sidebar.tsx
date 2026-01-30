@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
   Users, 
@@ -14,6 +14,13 @@ import { useAuth } from '../../core/auth/useAuth';
 
 export const Sidebar: React.FC = () => {
   const { logout } = useAuth();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  
+  // Se estiver na Home, a sidebar fica minimizada (apenas ícones).
+  // Nas outras telas, ela expande.
+  const isCollapsed = isHome;
+  const sidebarWidth = isCollapsed ? '80px' : '250px';
 
   const navItems = [
     { path: '/', label: 'Início', icon: Home },
@@ -27,7 +34,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside style={{
-      width: '250px',
+      width: sidebarWidth,
       backgroundColor: 'var(--surface)',
       borderRight: '1px solid var(--border)',
       display: 'flex',
@@ -35,12 +42,26 @@ export const Sidebar: React.FC = () => {
       height: '100vh',
       position: 'sticky',
       top: 0,
-      left: 0
+      left: 0,
+      transition: 'width 0.3s ease'
     }}>
-      <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
-        <h2 style={{ color: 'var(--primary)', fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div style={{ 
+        padding: '1.5rem', 
+        borderBottom: '1px solid var(--border)',
+        display: 'flex',
+        justifyContent: isCollapsed ? 'center' : 'flex-start'
+      }}>
+        <h2 style={{ 
+          color: 'var(--primary)', 
+          fontSize: '1.5rem', 
+          fontWeight: 'bold', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '0.5rem',
+          margin: 0
+        }}>
           <Wrench size={24} />
-          Oficina
+          {!isCollapsed && <span>Oficina</span>}
         </h2>
       </div>
 
@@ -50,9 +71,11 @@ export const Sidebar: React.FC = () => {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                title={isCollapsed ? item.label : ''}
                 style={({ isActive }) => ({
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
                   gap: '0.75rem',
                   padding: '0.75rem 1rem',
                   borderRadius: '0.5rem',
@@ -64,7 +87,7 @@ export const Sidebar: React.FC = () => {
                 })}
               >
                 <item.icon size={20} />
-                {item.label}
+                {!isCollapsed && <span>{item.label}</span>}
               </NavLink>
             </li>
           ))}
@@ -74,9 +97,11 @@ export const Sidebar: React.FC = () => {
       <div style={{ padding: '1rem', borderTop: '1px solid var(--border)' }}>
         <button
           onClick={logout}
+          title={isCollapsed ? 'Sair' : ''}
           style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: isCollapsed ? 'center' : 'flex-start',
             gap: '0.75rem',
             padding: '0.75rem 1rem',
             width: '100%',
@@ -91,7 +116,7 @@ export const Sidebar: React.FC = () => {
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           <LogOut size={20} />
-          Sair
+          {!isCollapsed && <span>Sair</span>}
         </button>
       </div>
     </aside>
