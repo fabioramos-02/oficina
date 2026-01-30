@@ -60,8 +60,9 @@ export async function GET() {
  *               cnpj:
  *                 type: string
  *               origemCliente:
- *                 type: string
- *               telefone:
+*                 type: string
+*                 enum: [INDICACAO, INSTAGRAM, GOOGLE, FACEBOOK, OUTROS]
+*               telefone:
  *                 type: string
  *               telefoneExtra:
  *                 type: string

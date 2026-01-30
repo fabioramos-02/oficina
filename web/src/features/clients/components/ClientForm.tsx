@@ -17,7 +17,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
   const [formData, setFormData] = useState<ClientInput>({
     nome: '',
     tipoCliente: 'PF',
-    origemCliente: '',
+    origemCliente: undefined,
     cpf: '',
     cnpj: '',
     email: '',
@@ -43,7 +43,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
       setFormData({
         nome: initialData.nome || '',
         tipoCliente: initialData.tipoCliente || 'PF',
-        origemCliente: initialData.origemCliente || '',
+        origemCliente: initialData.origemCliente || undefined,
         cpf: initialData.cpf || '',
         cnpj: initialData.cnpj || '',
         email: initialData.email || '',
@@ -91,6 +91,12 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
     if (validate()) {
       // Limpar campos que não pertencem ao tipo selecionado
       const dataToSend = { ...formData };
+      
+      // Converter string vazia para undefined no enum
+      if (dataToSend.origemCliente === '' as any) {
+        dataToSend.origemCliente = undefined;
+      }
+
       if (dataToSend.tipoCliente === 'PF') {
         dataToSend.cnpj = '';
       } else {
@@ -103,7 +109,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
   };
 
   const handleChange = (field: keyof ClientInput, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value as any }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
