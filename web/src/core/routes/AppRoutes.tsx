@@ -7,6 +7,7 @@ import { AuthProvider } from '../auth/AuthContext';
 
 import { ClientsPage } from '../../features/clients/pages/ClientsPage';
 import { InventoryPage } from '../../features/inventory/pages/InventoryPage';
+import { ServicesPage } from '../../features/services/pages/ServicesPage';
 import { UnderConstructionPage } from '../../shared/pages/UnderConstructionPage';
 
 export const AppRoutes: React.FC = () => {
@@ -26,7 +27,7 @@ export const AppRoutes: React.FC = () => {
             <Route path="/pedidos" element={<UnderConstructionPage />} />
             <Route path="/agenda" element={<UnderConstructionPage />} />
             <Route path="/financeiro" element={<UnderConstructionPage />} />
-            <Route path="/servicos" element={<UnderConstructionPage />} />
+            <Route path="/servicos" element={<ServicesPage />} />
             <Route path="/estoque" element={<InventoryPage />} />
           </Route>
 
