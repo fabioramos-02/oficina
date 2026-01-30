@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Peca, PecaInput } from '../types';
+import { CurrencyInput } from '../../../shared/components/ui/CurrencyInput';
 
 interface InventoryFormProps {
   initialData?: Peca;
@@ -92,28 +93,20 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({ initialData, onSub
         </div>
 
         <div style={formGroupStyle}>
-          <label style={labelStyle}>Preço de Custo (R$) *</label>
-          <input
-            type="number"
+          <CurrencyInput
+            label="Preço de Custo"
             required
-            min="0"
-            step="0.01"
-            value={formData.precoCusto}
-            onChange={(e) => handleChange('precoCusto', parseFloat(e.target.value) || 0)}
-            style={inputStyle}
+            value={Number(formData.precoCusto)}
+            onChange={(val) => handleChange('precoCusto', val)}
           />
         </div>
 
         <div style={formGroupStyle}>
-          <label style={labelStyle}>Preço de Venda (R$) *</label>
-          <input
-            type="number"
+          <CurrencyInput
+            label="Preço de Venda"
             required
-            min="0"
-            step="0.01"
-            value={formData.precoVenda}
-            onChange={(e) => handleChange('precoVenda', parseFloat(e.target.value) || 0)}
-            style={inputStyle}
+            value={Number(formData.precoVenda)}
+            onChange={(val) => handleChange('precoVenda', val)}
           />
         </div>
       </div>
