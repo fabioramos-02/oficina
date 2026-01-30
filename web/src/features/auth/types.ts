@@ -1,8 +1,8 @@
 export interface User {
   id: string;
-  name: string;
   email: string;
   role: string;
+  name?: string;
 }
 
 export interface LoginResponse {
@@ -13,4 +13,14 @@ export interface LoginResponse {
 export interface LoginCredentials {
   email: string;
   password: string;
+}
+
+// Internal type for backend communication
+export interface BackendLoginResponse {
+  token: string;
+  usuario: {
+    id: string;
+    email: string;
+    funcao: string;
+  };
 }

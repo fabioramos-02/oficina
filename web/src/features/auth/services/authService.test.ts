@@ -10,10 +10,15 @@ describe('authService', () => {
   });
 
   it('should call login endpoint with correct credentials', async () => {
+    // Mock backend response structure
     const mockResponse = {
       data: {
         token: 'fake-token',
-        user: { id: '1', name: 'Test', email: 'test@test.com', role: 'admin' }
+        usuario: { 
+          id: '1', 
+          email: 'test@test.com', 
+          funcao: 'admin' 
+        }
       }
     };
     (httpClient.post as any).mockResolvedValue(mockResponse);
@@ -21,7 +26,21 @@ describe('authService', () => {
     const credentials = { email: 'test@test.com', password: 'password' };
     const result = await authService.login(credentials);
 
-    expect(httpClient.post).toHaveBeenCalledWith('/auth/login', credentials);
-    expect(result).toEqual(mockResponse.data);
+    // Verify it maps credentials to backend payload (email, senha)
+    expect(httpClient.post).toHaveBeenCalledWith('/auth/login', {
+      email: 'test@test.com',
+      senha: 'password'
+    });
+
+    // Verify it maps backend response to frontend domain (user, role)
+    expect(result).toEqual({
+      token: 'fake-token',
+      user: {
+        id: '1',
+        email: 'test@test.com',
+        role: 'admin',
+        name: 'test' // 'test@test.com'.split('@')[0]
+      }
+    });
   });
 });
