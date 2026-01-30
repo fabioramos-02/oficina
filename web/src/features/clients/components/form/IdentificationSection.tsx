@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ClientInput } from '../../../types';
+import type { ClientInput } from '../../types';
 import { inputStyle, labelStyle, sectionStyle, sectionTitleStyle, inputGroupStyle } from './styles';
 
 interface IdentificationSectionProps {

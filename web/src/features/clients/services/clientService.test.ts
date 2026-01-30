@@ -45,9 +45,17 @@ describe('clientService', () => {
       endereco: 'Test Address'
     };
 
-    const result = await clientService.create(input);
+    const result = await clientService.create({
+      ...input,
+      tipoCliente: 'PF',
+      cpf: '000.000.000-00'
+    });
 
-    expect(httpClient.post).toHaveBeenCalledWith('/clientes', input);
+    expect(httpClient.post).toHaveBeenCalledWith('/clientes', {
+      ...input,
+      tipoCliente: 'PF',
+      cpf: '000.000.000-00'
+    });
     expect(result).toEqual(mockClient);
   });
 
@@ -59,9 +67,17 @@ describe('clientService', () => {
       email: 'test@example.com'
     };
 
-    const result = await clientService.update('1', input);
+    const result = await clientService.update('1', {
+      ...input,
+      tipoCliente: 'PF',
+      cpf: '000.000.000-00'
+    });
 
-    expect(httpClient.put).toHaveBeenCalledWith('/clientes/1', input);
+    expect(httpClient.put).toHaveBeenCalledWith('/clientes/1', {
+      ...input,
+      tipoCliente: 'PF',
+      cpf: '000.000.000-00'
+    });
     expect(result).toEqual(mockClient);
   });
 

@@ -94,7 +94,7 @@ export const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelet
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead style={{ backgroundColor: '#F9FAFB' }}>
             <tr>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Nome</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Nome / Documento</th>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Contato</th>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Endereço</th>
               <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Ações</th>
@@ -124,7 +124,12 @@ export const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelet
                       }}>
                         <User size={16} />
                       </div>
-                      <span style={{ fontWeight: 500, color: '#111827' }}>{client.nome}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 500, color: '#111827' }}>{client.nome}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                          {client.tipoCliente === 'PJ' ? client.cnpj : client.cpf}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
@@ -134,7 +139,7 @@ export const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelet
                     </div>
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '0.875rem', color: '#6B7280', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {client.endereco || '-'}
+                    {client.endereco || [client.logradouro, client.numero, client.bairro, client.cidade].filter(Boolean).join(', ') || '-'}
                   </td>
                   <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>

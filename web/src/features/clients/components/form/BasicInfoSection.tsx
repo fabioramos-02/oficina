@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ClientInput, ClientType } from '../../../types';
+import type { ClientInput, ClientType } from '../../types';
 import { inputStyle, labelStyle, sectionStyle, sectionTitleStyle, inputGroupStyle } from './styles';
 
 interface BasicInfoSectionProps {
@@ -27,13 +27,18 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ formData, ha
         
         <div>
           <label style={labelStyle}>Origem do Cliente</label>
-          <input
-            type="text"
+          <select
             value={formData.origemCliente || ''}
             onChange={(e) => handleChange('origemCliente', e.target.value)}
             style={inputStyle(false)}
-            placeholder="Ex: Indicação, Google, Instagram"
-          />
+          >
+            <option value="">Selecione uma opção</option>
+            <option value="INDICACAO">Indicação</option>
+            <option value="INSTAGRAM">Instagram</option>
+            <option value="GOOGLE">Google</option>
+            <option value="FACEBOOK">Facebook</option>
+            <option value="OUTROS">Outros</option>
+          </select>
         </div>
 
         <div>

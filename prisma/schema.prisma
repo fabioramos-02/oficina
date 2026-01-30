@@ -46,6 +46,14 @@ enum TipoCliente {
   PJ
 }
 
+enum OrigemCliente {
+  INDICACAO
+  INSTAGRAM
+  GOOGLE
+  FACEBOOK
+  OUTROS
+}
+
 // -----------------------------------------------------------------------------
 // MODELS
 // -----------------------------------------------------------------------------
@@ -74,7 +82,7 @@ model Cliente {
   nome          String
   
   // Origem e Tipo
-  origemCliente String?
+  origemCliente OrigemCliente?
   tipoCliente   TipoCliente    @default(PF)
   
   // Documentos

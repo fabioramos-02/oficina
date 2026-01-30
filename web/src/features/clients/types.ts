@@ -1,10 +1,12 @@
 export type ClientType = 'PF' | 'PJ';
 
+export type OrigemCliente = 'INDICACAO' | 'INSTAGRAM' | 'GOOGLE' | 'FACEBOOK' | 'OUTROS';
+
 export interface Client {
   id: string;
   nome: string;
   tipoCliente: ClientType;
-  origemCliente?: string | null;
+  origemCliente?: OrigemCliente | null;
   
   // Documentos
   cpf?: string | null;
@@ -36,7 +38,7 @@ export interface Client {
 export interface ClientInput {
   nome: string;
   tipoCliente: ClientType;
-  origemCliente?: string;
+  origemCliente?: OrigemCliente;
   
   cpf?: string;
   cnpj?: string;
