@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { obterVeiculoPorId, atualizarDadosVeiculo, removerVeiculo } from '@/services/veiculoServico';
 
 interface Contexto {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -35,7 +35,7 @@ interface Contexto {
  */
 export async function GET(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const veiculo = await obterVeiculoPorId(id);
     return NextResponse.json(veiculo);
   } catch (error: any) {
@@ -88,7 +88,7 @@ export async function GET(request: Request, context: Contexto) {
  */
 export async function PUT(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const body = await request.json();
     const veiculoAtualizado = await atualizarDadosVeiculo(id, body);
     return NextResponse.json(veiculoAtualizado);
@@ -130,7 +130,7 @@ export async function PUT(request: Request, context: Contexto) {
  */
 export async function DELETE(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     await removerVeiculo(id);
     return NextResponse.json({ mensagem: 'Veículo removido com sucesso.' });
   } catch (error: any) {

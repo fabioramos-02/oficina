@@ -25,11 +25,23 @@ export async function criarNovoCliente(dados: Prisma.ClienteCreateInput): Promis
     throw new Error(`Validação falhou: ${erros.join('; ')}`);
   }
 
-  // Remove campos que não existem no banco (como 'endereco' legado ou campos extras)
-  // O Frontend pode estar enviando 'endereco' vazio por compatibilidade antiga
-  const { endereco, ...dadosValidos } = dados as any;
+  // Preparação dos dados para salvar
+  const dadosParaSalvar = { ...dados } as any;
 
-  return repo.criarCliente(dadosValidos);
+  // Converter dataNascimento de string (YYYY-MM-DD) para Date ISO
+  if (dadosParaSalvar.dataNascimento && typeof dadosParaSalvar.dataNascimento === 'string') {
+    const dataStr = dadosParaSalvar.dataNascimento.includes('T')
+      ? dadosParaSalvar.dataNascimento
+      : `${dadosParaSalvar.dataNascimento}T00:00:00.000Z`;
+    dadosParaSalvar.dataNascimento = new Date(dataStr);
+  }
+
+  // Remove campos que não existem no banco (como 'endereco' legado)
+  if ('endereco' in dadosParaSalvar) {
+    delete dadosParaSalvar.endereco;
+  }
+
+  return repo.criarCliente(dadosParaSalvar);
 }
 
 export async function obterTodosClientes(): Promise<Cliente[]> {
@@ -43,18 +55,28 @@ export async function obterClientePorId(id: string): Promise<Cliente | null> {
 }
 
 export async function atualizarDadosCliente(id: string, dados: Prisma.ClienteUpdateInput): Promise<Cliente> {
-  // Validação condicional na atualização (se os campos estiverem presentes)
-  if (dados.tipoCliente === 'PF' && dados.cpf === null) {
-     // Se estiver mudando para PF ou já for PF, e tentando limpar o CPF (exemplo hipotético, ou se for enviado vazio)
-     // Prisma update types allow undefined/null. We should check if it's being set to empty/null improperly.
-     // Mas na atualização parcial, só validamos se o campo for enviado.
+  // Preparação dos dados para atualizar
+  const dadosParaSalvar = { ...dados } as any;
+
+  // Converter dataNascimento de string (YYYY-MM-DD) para Date ISO
+  if (dadosParaSalvar.dataNascimento && typeof dadosParaSalvar.dataNascimento === 'string') {
+    const dataStr = dadosParaSalvar.dataNascimento.includes('T')
+      ? dadosParaSalvar.dataNascimento
+      : `${dadosParaSalvar.dataNascimento}T00:00:00.000Z`;
+    dadosParaSalvar.dataNascimento = new Date(dataStr);
+  }
+
+  // Remove campos que não existem no banco
+  if ('endereco' in dadosParaSalvar) {
+    delete dadosParaSalvar.endereco;
   }
   
-  // Simplificação: validação robusta requer verificar o estado atual no banco se for uma atualização parcial.
-  // Para este MVP, vamos focar na criação e assumir que o frontend manda dados consistentes na edição.
-  // Porém, se o tipo for alterado, devemos garantir que o documento correspondente seja fornecido.
+  // Validação condicional na atualização (se os campos estiverem presentes)
+  if (dados.tipoCliente === 'PF' && dados.cpf === null) {
+     // Validações adicionais de atualização se necessário
+  }
   
-  return repo.atualizarCliente(id, dados);
+  return repo.atualizarCliente(id, dadosParaSalvar);
 }
 
 export async function removerCliente(id: string): Promise<Cliente> {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { obterUsuarioPorId, atualizarDadosUsuario, removerUsuario } from '@/services/usuarioServico';
 
 interface Contexto {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -35,7 +35,7 @@ interface Contexto {
  */
 export async function GET(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const usuario = await obterUsuarioPorId(id);
     if (usuario) {
       const { hashSenha, ...usuarioSemSenha } = usuario;
@@ -90,7 +90,7 @@ export async function GET(request: Request, context: Contexto) {
  */
 export async function PUT(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const body = await request.json();
     const usuarioAtualizado = await atualizarDadosUsuario(id, body);
     const { hashSenha, ...usuarioSemSenha } = usuarioAtualizado;
@@ -133,7 +133,7 @@ export async function PUT(request: Request, context: Contexto) {
  */
 export async function DELETE(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     await removerUsuario(id);
     return NextResponse.json({ mensagem: 'Usuário removido com sucesso.' });
   } catch (error: any) {

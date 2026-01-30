@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { obterClientePorId, atualizarDadosCliente, removerCliente } from '@/services/clienteServico';
 
 interface Contexto {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -36,7 +36,7 @@ interface Contexto {
  */
 export async function GET(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const cliente = await obterClientePorId(id);
     return NextResponse.json(cliente);
   } catch (error: any) {
@@ -119,7 +119,7 @@ export async function GET(request: Request, context: Contexto) {
  */
 export async function PUT(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const body = await request.json();
     const clienteAtualizado = await atualizarDadosCliente(id, body);
     return NextResponse.json(clienteAtualizado);
@@ -155,7 +155,7 @@ export async function PUT(request: Request, context: Contexto) {
  */
 export async function DELETE(request: Request, context: Contexto) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     await removerCliente(id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
