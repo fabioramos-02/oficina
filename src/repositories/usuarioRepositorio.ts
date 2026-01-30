@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import prisma from '../lib/prisma';
 import { Usuario, Prisma } from '@prisma/client';
 
 /**

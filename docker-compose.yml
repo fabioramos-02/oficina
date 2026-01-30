@@ -9,7 +9,7 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://oficina:oficina123@db:5432/oficina?schema=public
-      - JWT_SECRET=sua_chave_secreta_aqui
+      - JWT_SECRET=N1FSemDuULDQ2wCNLQETZQFZat5lGgqBhSSW3pgfgmt
     depends_on:
       - db
     networks:

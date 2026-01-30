@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import prisma from '../lib/prisma';
 import { OrdemServico, Prisma } from '@prisma/client';
 
 export async function criarOrdemServico(dados: Prisma.OrdemServicoCreateInput): Promise<OrdemServico> {
