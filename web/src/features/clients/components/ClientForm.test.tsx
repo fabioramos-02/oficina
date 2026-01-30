@@ -1,97 +1,83 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ClientForm } from './ClientForm';
-import { vi, describe, it, expect } from 'vitest';
 
 describe('ClientForm', () => {
-  it('should render form fields', () => {
-    render(
-      <ClientForm
-        onSubmit={async () => {}}
-        onCancel={() => {}}
-      />
-    );
+  const mockOnSubmit = vi.fn();
+  const mockOnCancel = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should render form fields correctly', () => {
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
     expect(screen.getByPlaceholderText('Nome completo')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('email@exemplo.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('(00) 00000-0000')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Endereço completo')).toBeInTheDocument();
+    expect(screen.getByText('Telefone')).toBeInTheDocument();
+    expect(screen.getByText('Endereço')).toBeInTheDocument();
+    expect(screen.getByText('Salvar')).toBeInTheDocument();
+    expect(screen.getByText('Cancelar')).toBeInTheDocument();
   });
 
-  it('should validate required fields', async () => {
-    const handleSubmit = vi.fn();
-    render(
-      <ClientForm
-        onSubmit={handleSubmit}
-        onCancel={() => {}}
-      />
-    );
+  it('should show validation error when name is empty', async () => {
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
-    fireEvent.click(screen.getByText('Salvar'));
+    const submitButton = screen.getByText('Salvar');
+    fireEvent.click(submitButton);
 
     expect(await screen.findByText('Nome é obrigatório')).toBeInTheDocument();
-    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('should validate email format', async () => {
-    const handleSubmit = vi.fn();
-    render(
-      <ClientForm
-        onSubmit={handleSubmit}
-        onCancel={() => {}}
-      />
-    );
+  it('should show validation error for invalid email', async () => {
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
-    fireEvent.change(screen.getByPlaceholderText('Nome completo'), { target: { value: 'Test Client' } });
-    fireEvent.change(screen.getByPlaceholderText('email@exemplo.com'), { target: { value: 'invalid-email' } });
-    
-    fireEvent.click(screen.getByText('Salvar'));
+    const emailInput = screen.getByPlaceholderText('email@exemplo.com');
+    await userEvent.type(emailInput, 'invalid-email');
+
+    const submitButton = screen.getByText('Salvar');
+    fireEvent.click(submitButton);
 
     expect(await screen.findByText('Email inválido')).toBeInTheDocument();
-    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('should submit valid form', async () => {
-    const handleSubmit = vi.fn();
-    render(
-      <ClientForm
-        onSubmit={handleSubmit}
-        onCancel={() => {}}
-      />
-    );
+  it('should submit form with valid data', async () => {
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
-    fireEvent.change(screen.getByPlaceholderText('Nome completo'), { target: { value: 'Test Client' } });
-    fireEvent.change(screen.getByPlaceholderText('email@exemplo.com'), { target: { value: 'test@test.com' } });
+    await userEvent.type(screen.getByPlaceholderText('Nome completo'), 'John Doe');
+    await userEvent.type(screen.getByPlaceholderText('email@exemplo.com'), 'john@example.com');
     
-    fireEvent.click(screen.getByText('Salvar'));
+    const submitButton = screen.getByText('Salvar');
+    fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(handleSubmit).toHaveBeenCalledWith({
-        nome: 'Test Client',
-        email: 'test@test.com',
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        nome: 'John Doe',
+        email: 'john@example.com',
         telefone: '',
         endereco: ''
       });
     });
   });
 
-  it('should load initial data', () => {
+  it('should populate form with initial data', () => {
     const initialData = {
       id: '1',
       nome: 'Existing Client',
-      email: 'existing@test.com',
-      telefone: '123',
-      endereco: 'Address'
+      email: 'existing@example.com',
+      telefone: '123456',
+      endereco: 'Some St'
     };
 
-    render(
-      <ClientForm
-        initialData={initialData}
-        onSubmit={async () => {}}
-        onCancel={() => {}}
-      />
-    );
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} initialData={initialData} />);
 
     expect(screen.getByDisplayValue('Existing Client')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('existing@test.com')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('existing@example.com')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('123456')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Some St')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ClipboardList, 
   Calendar, 
@@ -14,6 +15,7 @@ import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../services/dashboardService';
 
 export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export const HomePage: React.FC = () => {
             title={item.title}
             icon={item.icon}
             color={item.color}
-            onClick={() => console.log(`Navigate to ${item.route}`)}
+            onClick={() => navigate(item.route)}
           />
         ))}
       </div>

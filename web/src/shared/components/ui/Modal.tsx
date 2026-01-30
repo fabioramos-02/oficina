@@ -1,4 +1,5 @@
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -10,9 +11,16 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer }) => {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
     <div style={{
       position: 'fixed',
       top: 0,
@@ -34,7 +42,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
         overflow: 'auto',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        margin: '16px'
       }}>
         <div style={{
           padding: '16px 24px',
@@ -65,6 +74,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

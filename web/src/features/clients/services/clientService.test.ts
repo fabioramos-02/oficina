@@ -12,12 +12,12 @@ describe('clientService', () => {
   const mockClient = {
     id: '1',
     nome: 'Test Client',
-    email: 'test@test.com',
+    email: 'test@example.com',
     telefone: '123456789',
     endereco: 'Test Address'
   };
 
-  it('should get all clients', async () => {
+  it('should fetch all clients', async () => {
     (httpClient.get as any).mockResolvedValue({ data: [mockClient] });
 
     const result = await clientService.getAll();
@@ -26,7 +26,7 @@ describe('clientService', () => {
     expect(result).toEqual([mockClient]);
   });
 
-  it('should get client by id', async () => {
+  it('should fetch client by id', async () => {
     (httpClient.get as any).mockResolvedValue({ data: mockClient });
 
     const result = await clientService.getById('1');
@@ -35,31 +35,38 @@ describe('clientService', () => {
     expect(result).toEqual(mockClient);
   });
 
-  it('should create client', async () => {
-    const newClient = {
-      nome: 'Test Client',
-      email: 'test@test.com'
-    };
+  it('should create a client', async () => {
     (httpClient.post as any).mockResolvedValue({ data: mockClient });
 
-    const result = await clientService.create(newClient);
+    const input = {
+      nome: 'Test Client',
+      email: 'test@example.com',
+      telefone: '123456789',
+      endereco: 'Test Address'
+    };
 
-    expect(httpClient.post).toHaveBeenCalledWith('/clientes', newClient);
+    const result = await clientService.create(input);
+
+    expect(httpClient.post).toHaveBeenCalledWith('/clientes', input);
     expect(result).toEqual(mockClient);
   });
 
-  it('should update client', async () => {
-    const updateData = { nome: 'Updated Name' };
-    (httpClient.put as any).mockResolvedValue({ data: { ...mockClient, ...updateData } });
+  it('should update a client', async () => {
+    (httpClient.put as any).mockResolvedValue({ data: mockClient });
 
-    const result = await clientService.update('1', updateData as any);
+    const input = {
+      nome: 'Updated Client',
+      email: 'test@example.com'
+    };
 
-    expect(httpClient.put).toHaveBeenCalledWith('/clientes/1', updateData);
-    expect(result.nome).toBe('Updated Name');
+    const result = await clientService.update('1', input);
+
+    expect(httpClient.put).toHaveBeenCalledWith('/clientes/1', input);
+    expect(result).toEqual(mockClient);
   });
 
-  it('should delete client', async () => {
-    (httpClient.delete as any).mockResolvedValue({});
+  it('should delete a client', async () => {
+    (httpClient.delete as any).mockResolvedValue({ data: {} });
 
     await clientService.delete('1');
 
