@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ClientForm } from './ClientForm';
-import { Client } from '../types';
+import type { Client } from '../types';
 
 describe('ClientForm', () => {
   const mockOnSubmit = vi.fn();
@@ -78,7 +78,9 @@ describe('ClientForm', () => {
       cnpj: '00.000.000/0001-91',
       email: 'existing@example.com',
       telefone: '123456',
-      logradouro: 'Some St'
+      logradouro: 'Some St',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} initialData={initialData} />);

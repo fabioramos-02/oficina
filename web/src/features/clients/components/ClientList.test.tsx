@@ -12,9 +12,13 @@ describe('ClientList', () => {
   const mockClients: Client[] = Array.from({ length: 15 }, (_, i) => ({
     id: `${i + 1}`,
     nome: `Client ${i + 1}`,
+    tipoCliente: 'PF',
+    cpf: '000.000.000-00',
     email: `client${i + 1}@example.com`,
     telefone: `12345678${i}`,
-    endereco: `Address ${i + 1}`
+    endereco: `Address ${i + 1}`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }));
 
   beforeEach(() => {

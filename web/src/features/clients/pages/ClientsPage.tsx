@@ -100,6 +100,7 @@ export const ClientsPage: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={selectedClient ? 'Editar Cliente' : 'Novo Cliente'}
+          maxWidth="800px"
         >
           <ClientForm
             initialData={selectedClient}

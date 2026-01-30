@@ -8,9 +8,10 @@ interface ModalProps {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
+  maxWidth?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer }) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer, maxWidth = '500px' }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
         backgroundColor: 'white',
         borderRadius: '8px',
         width: '100%',
-        maxWidth: '500px',
+        maxWidth: maxWidth,
         maxHeight: '90vh',
         overflow: 'auto',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
