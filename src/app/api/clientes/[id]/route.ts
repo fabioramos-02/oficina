@@ -70,11 +70,40 @@ export async function GET(request: Request, context: Contexto) {
  *             properties:
  *               nome:
  *                 type: string
+ *               tipoCliente:
+ *                 type: string
+ *                 enum: [PF, PJ]
+ *               cpf:
+ *                 type: string
+ *               cnpj:
+ *                 type: string
+ *               origemCliente:
+ *                 type: string
  *               telefone:
+ *                 type: string
+ *               telefoneExtra:
  *                 type: string
  *               email:
  *                 type: string
- *               endereco:
+ *                 format: email
+ *               cep:
+ *                 type: string
+ *               logradouro:
+ *                 type: string
+ *               numero:
+ *                 type: string
+ *               complemento:
+ *                 type: string
+ *               bairro:
+ *                 type: string
+ *               cidade:
+ *                 type: string
+ *               estado:
+ *                 type: string
+ *               dataNascimento:
+ *                 type: string
+ *                 format: date-time
+ *               anotacoes:
  *                 type: string
  *     responses:
  *       200:
@@ -104,7 +133,7 @@ export async function PUT(request: Request, context: Contexto) {
  * /api/clientes/{id}:
  *   delete:
  *     summary: Remove um cliente
- *     description: Remove um cliente do sistema pelo ID.
+ *     description: Remove um cliente existente.
  *     tags: [Clientes]
  *     security:
  *       - BearerAuth: []
@@ -119,15 +148,8 @@ export async function PUT(request: Request, context: Contexto) {
  *     responses:
  *       200:
  *         description: Cliente removido com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 mensagem:
- *                   type: string
  *       400:
- *         description: Erro ao remover cliente.
+ *         description: Erro ao remover.
  *       404:
  *         description: Cliente não encontrado.
  */
@@ -135,7 +157,7 @@ export async function DELETE(request: Request, context: Contexto) {
   try {
     const { id } = context.params;
     await removerCliente(id);
-    return NextResponse.json({ mensagem: 'Cliente removido com sucesso.' });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ erro: error.message }, { status: 400 });
   }

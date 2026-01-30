@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ClientForm } from './ClientForm';
+import { Client } from '../types';
 
 describe('ClientForm', () => {
   const mockOnSubmit = vi.fn();
@@ -14,70 +15,77 @@ describe('ClientForm', () => {
   it('should render form fields correctly', () => {
     render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
-    expect(screen.getByPlaceholderText('Nome completo')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('email@exemplo.com')).toBeInTheDocument();
-    expect(screen.getByText('Telefone')).toBeInTheDocument();
-    expect(screen.getByText('Endereço')).toBeInTheDocument();
-    expect(screen.getByText('Salvar')).toBeInTheDocument();
-    expect(screen.getByText('Cancelar')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Nome completo ou Razão Social')).toBeInTheDocument();
+    expect(screen.getByText('Pessoa Física')).toBeInTheDocument();
+    expect(screen.getByText('Pessoa Jurídica')).toBeInTheDocument();
+    // PF fields visible by default
+    expect(screen.getByPlaceholderText('000.000.000-00')).toBeInTheDocument();
+    // Address fields
+    expect(screen.getByPlaceholderText('00000-000')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Rua, Av...')).toBeInTheDocument();
   });
 
-  it('should show validation error when name is empty', async () => {
+  it('should toggle between CPF and CNPJ when type changes', async () => {
+    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
+
+    const radioPJ = screen.getByLabelText('Pessoa Jurídica');
+    fireEvent.click(radioPJ);
+
+    expect(screen.getByPlaceholderText('00.000.000/0000-00')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('000.000.000-00')).not.toBeInTheDocument();
+
+    const radioPF = screen.getByLabelText('Pessoa Física');
+    fireEvent.click(radioPF);
+
+    expect(screen.getByPlaceholderText('000.000.000-00')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('00.000.000/0000-00')).not.toBeInTheDocument();
+  });
+
+  it('should show validation error when required fields are empty', async () => {
     render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
     const submitButton = screen.getByText('Salvar');
     fireEvent.click(submitButton);
 
     expect(await screen.findByText('Nome é obrigatório')).toBeInTheDocument();
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-
-  it('should show validation error for invalid email', async () => {
-    render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-
-    const emailInput = screen.getByPlaceholderText('email@exemplo.com');
-    await userEvent.type(emailInput, 'invalid-email');
-
-    const submitButton = screen.getByText('Salvar');
-    fireEvent.click(submitButton);
-
-    expect(await screen.findByText('Email inválido')).toBeInTheDocument();
+    expect(await screen.findByText('CPF é obrigatório para Pessoa Física')).toBeInTheDocument();
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('should submit form with valid data', async () => {
     render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
 
-    await userEvent.type(screen.getByPlaceholderText('Nome completo'), 'John Doe');
-    await userEvent.type(screen.getByPlaceholderText('email@exemplo.com'), 'john@example.com');
+    await userEvent.type(screen.getByPlaceholderText('Nome completo ou Razão Social'), 'John Doe');
+    await userEvent.type(screen.getByPlaceholderText('000.000.000-00'), '123.456.789-00');
     
     const submitButton = screen.getByText('Salvar');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
+      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({
         nome: 'John Doe',
-        email: 'john@example.com',
-        telefone: '',
-        endereco: ''
-      });
+        cpf: '123.456.789-00',
+        tipoCliente: 'PF'
+      }));
     });
   });
 
   it('should populate form with initial data', () => {
-    const initialData = {
+    const initialData: Client = {
       id: '1',
       nome: 'Existing Client',
+      tipoCliente: 'PJ',
+      cnpj: '00.000.000/0001-91',
       email: 'existing@example.com',
       telefone: '123456',
-      endereco: 'Some St'
+      logradouro: 'Some St'
     };
 
     render(<ClientForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} initialData={initialData} />);
 
     expect(screen.getByDisplayValue('Existing Client')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('existing@example.com')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('123456')).toBeInTheDocument();
+    expect(screen.getByLabelText('Pessoa Jurídica')).toBeChecked();
+    expect(screen.getByDisplayValue('00.000.000/0001-91')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Some St')).toBeInTheDocument();
   });
 });

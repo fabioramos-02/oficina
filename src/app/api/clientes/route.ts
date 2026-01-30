@@ -52,12 +52,40 @@ export async function GET() {
  *             properties:
  *               nome:
  *                 type: string
+ *               tipoCliente:
+ *                 type: string
+ *                 enum: [PF, PJ]
+ *               cpf:
+ *                 type: string
+ *               cnpj:
+ *                 type: string
+ *               origemCliente:
+ *                 type: string
  *               telefone:
+ *                 type: string
+ *               telefoneExtra:
  *                 type: string
  *               email:
  *                 type: string
  *                 format: email
- *               endereco:
+ *               cep:
+ *                 type: string
+ *               logradouro:
+ *                 type: string
+ *               numero:
+ *                 type: string
+ *               complemento:
+ *                 type: string
+ *               bairro:
+ *                 type: string
+ *               cidade:
+ *                 type: string
+ *               estado:
+ *                 type: string
+ *               dataNascimento:
+ *                 type: string
+ *                 format: date-time
+ *               anotacoes:
  *                 type: string
  *     responses:
  *       201:
