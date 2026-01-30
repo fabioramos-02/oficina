@@ -34,6 +34,8 @@ export async function criarNovoCliente(dados: Prisma.ClienteCreateInput): Promis
       ? dadosParaSalvar.dataNascimento
       : `${dadosParaSalvar.dataNascimento}T00:00:00.000Z`;
     dadosParaSalvar.dataNascimento = new Date(dataStr);
+  } else if (dadosParaSalvar.dataNascimento === '') {
+    dadosParaSalvar.dataNascimento = null;
   }
 
   // Remove campos que não existem no banco (como 'endereco' legado)
@@ -64,6 +66,8 @@ export async function atualizarDadosCliente(id: string, dados: Prisma.ClienteUpd
       ? dadosParaSalvar.dataNascimento
       : `${dadosParaSalvar.dataNascimento}T00:00:00.000Z`;
     dadosParaSalvar.dataNascimento = new Date(dataStr);
+  } else if (dadosParaSalvar.dataNascimento === '') {
+    dadosParaSalvar.dataNascimento = null;
   }
 
   // Remove campos que não existem no banco

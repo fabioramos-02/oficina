@@ -141,15 +141,51 @@ model OrdemServico {
   veiculoId  String?
   veiculo    Veiculo?           @relation(fields: [veiculoId], references: [id])
   
-  itens      ItemServico[]
+  pecas      OrdemServicoPeca[]
+  servicos   OrdemServicoServico[]
 }
 
-model ItemServico {
+model Peca {
+  id                String             @id @default(uuid())
+  nome              String
+  codigo            String             @unique
+  precoCusto        Float
+  precoVenda        Float
+  quantidadeEstoque Int
+  
+  ordensServico     OrdemServicoPeca[]
+}
+
+model Servico {
+  id            String                @id @default(uuid())
+  nome          String
+  preco         Float
+  
+  ordensServico OrdemServicoServico[]
+}
+
+model OrdemServicoPeca {
   id             String       @id @default(uuid())
-  descricao      String
-  valorUnitario  Float
-  quantidade     Int
   
   ordemServicoId String
   ordemServico   OrdemServico @relation(fields: [ordemServicoId], references: [id])
+  
+  pecaId         String
+  peca           Peca         @relation(fields: [pecaId], references: [id])
+  
+  quantidadeUtilizada    Int
+  precoUnitarioUtilizado Float
+}
+
+model OrdemServicoServico {
+  id             String       @id @default(uuid())
+  
+  ordemServicoId String
+  ordemServico   OrdemServico @relation(fields: [ordemServicoId], references: [id])
+  
+  servicoId      String
+  servico        Servico      @relation(fields: [servicoId], references: [id])
+  
+  quantidade     Int
+  precoUnitario  Float
 }

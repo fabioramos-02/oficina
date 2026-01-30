@@ -9,6 +9,8 @@
   --success: #28A745;
   --warning: #FFC107;
   --danger: #DC3545;
+  --border: #E5E7EB;
+  --primary-foreground: #FFFFFF;
   --border-radius: 12px;
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
@@ -36,4 +38,15 @@ button {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* Utilities */
+.desktop-sidebar {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .desktop-sidebar {
+    display: none !important;
+  }
 }

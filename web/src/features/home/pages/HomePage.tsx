@@ -24,12 +24,12 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const menuItems = [
-    { title: 'Pedidos', icon: ClipboardList, color: '#9C89FF', route: '/orders' },
-    { title: 'Agenda', icon: Calendar, color: '#57D9A3', route: '/calendar' },
-    { title: 'Financeiro', icon: DollarSign, color: '#79E2F2', route: '/finance' },
+    { title: 'Pedidos', icon: ClipboardList, color: '#9C89FF', route: '/pedidos' },
+    { title: 'Agenda', icon: Calendar, color: '#57D9A3', route: '/agenda' },
+    { title: 'Financeiro', icon: DollarSign, color: '#79E2F2', route: '/financeiro' },
     { title: 'Clientes', icon: Users, color: '#FFC542', route: '/clientes' },
-    { title: 'Peças & Estoque', icon: Package, color: '#7DA0FA', route: '/inventory' },
-    { title: 'Serviços', icon: Wrench, color: '#7DA0FA', route: '/services' },
+    { title: 'Peças & Estoque', icon: Package, color: '#7DA0FA', route: '/estoque' },
+    { title: 'Serviços', icon: Wrench, color: '#7DA0FA', route: '/servicos' },
   ];
 
   return (

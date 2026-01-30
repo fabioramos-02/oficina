@@ -6,6 +6,7 @@ import { PrivateRoute } from './PrivateRoute';
 import { AuthProvider } from '../auth/AuthContext';
 
 import { ClientsPage } from '../../features/clients/pages/ClientsPage';
+import { UnderConstructionPage } from '../../shared/pages/UnderConstructionPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -19,7 +20,13 @@ export const AppRoutes: React.FC = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/clientes" element={<ClientsPage />} />
-            {/* Add other protected routes here */}
+            
+            {/* New Routes with Placeholders */}
+            <Route path="/pedidos" element={<UnderConstructionPage />} />
+            <Route path="/agenda" element={<UnderConstructionPage />} />
+            <Route path="/financeiro" element={<UnderConstructionPage />} />
+            <Route path="/servicos" element={<UnderConstructionPage />} />
+            <Route path="/estoque" element={<UnderConstructionPage />} />
           </Route>
 
           {/* Fallback */}

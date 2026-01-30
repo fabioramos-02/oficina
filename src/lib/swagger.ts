@@ -46,7 +46,7 @@ export const getApiDocs = async () => {
               bairro: { type: 'string' },
               cidade: { type: 'string' },
               estado: { type: 'string' },
-              dataNascimento: { type: 'string', format: 'date-time' },
+              dataNascimento: { type: 'string', format: 'date-time', nullable: true },
               anotacoes: { type: 'string' },
               endereco: { type: 'string' }, // Legacy
             },
