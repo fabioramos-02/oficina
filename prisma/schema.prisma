@@ -2,8 +2,8 @@
 // Este arquivo deve ser colocado no diretório 'prisma' do seu projeto backend.
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
