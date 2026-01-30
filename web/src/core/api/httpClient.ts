@@ -7,6 +7,12 @@ export const httpClient = axios.create({
   },
 });
 
+let onUnauthorizedCallback: (() => void) | null = null;
+
+export const onUnauthorized = (callback: () => void) => {
+  onUnauthorizedCallback = callback;
+};
+
 httpClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -19,8 +25,9 @@ httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access (e.g., redirect to login)
-      console.error('Unauthorized access');
+      if (onUnauthorizedCallback) {
+        onUnauthorizedCallback();
+      }
     }
     return Promise.reject(error);
   }
