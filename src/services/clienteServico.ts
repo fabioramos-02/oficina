@@ -25,7 +25,11 @@ export async function criarNovoCliente(dados: Prisma.ClienteCreateInput): Promis
     throw new Error(`Validação falhou: ${erros.join('; ')}`);
   }
 
-  return repo.criarCliente(dados);
+  // Remove campos que não existem no banco (como 'endereco' legado ou campos extras)
+  // O Frontend pode estar enviando 'endereco' vazio por compatibilidade antiga
+  const { endereco, ...dadosValidos } = dados as any;
+
+  return repo.criarCliente(dadosValidos);
 }
 
 export async function obterTodosClientes(): Promise<Cliente[]> {

@@ -36,7 +36,7 @@
     "jsonwebtoken": "^9.0.3",
     "next": "^16.1.6",
     "next-swagger-doc": "^0.4.1",
-    "pg": "^8.17.2",
+    "pg": "^8.18.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "swagger-ui-react": "^5.31.0"
@@ -45,12 +45,14 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.0.10",
+    "@types/pg": "^8.16.0",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@types/swagger-ui-react": "^5.18.0",
     "prisma": "^7.3.0",
     "prisma-docs-generator": "^0.8.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
