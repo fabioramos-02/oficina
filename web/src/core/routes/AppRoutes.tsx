@@ -5,6 +5,8 @@ import { LoginPage } from '../../features/auth/pages/LoginPage';
 import { PrivateRoute } from './PrivateRoute';
 import { AuthProvider } from '../auth/AuthContext';
 
+import { ClientsPage } from '../../features/clients/pages/ClientsPage';
+
 export const AppRoutes: React.FC = () => {
   return (
     <AuthProvider>
@@ -16,6 +18,7 @@ export const AppRoutes: React.FC = () => {
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/clientes" element={<ClientsPage />} />
             {/* Add other protected routes here */}
           </Route>
 

@@ -25,7 +25,7 @@ export const HomePage: React.FC = () => {
     { title: 'Pedidos', icon: ClipboardList, color: '#9C89FF', route: '/orders' },
     { title: 'Agenda', icon: Calendar, color: '#57D9A3', route: '/calendar' },
     { title: 'Financeiro', icon: DollarSign, color: '#79E2F2', route: '/finance' },
-    { title: 'Clientes', icon: Users, color: '#FFC542', route: '/clients' },
+    { title: 'Clientes', icon: Users, color: '#FFC542', route: '/clientes' },
     { title: 'Peças & Estoque', icon: Package, color: '#7DA0FA', route: '/inventory' },
     { title: 'Serviços', icon: Wrench, color: '#7DA0FA', route: '/services' },
   ];
