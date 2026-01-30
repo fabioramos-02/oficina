@@ -1,16 +1,28 @@
 import * as repo from '../repositories/clienteRepositorio';
 import { Cliente, Prisma } from '@prisma/client';
-
 export async function criarNovoCliente(dados: Prisma.ClienteCreateInput): Promise<Cliente> {
-  if (!dados.nome) throw new Error('Nome do cliente é obrigatório.');
+  const erros: string[] = [];
+
+  if (!dados.nome) erros.push('Nome do cliente é obrigatório.');
   
-  // Validação condicional de documentos
   if (dados.tipoCliente === 'PF' && !dados.cpf) {
-    throw new Error('CPF é obrigatório para clientes Pessoa Física.');
+    erros.push('CPF é obrigatório para clientes Pessoa Física.');
   }
   
   if (dados.tipoCliente === 'PJ' && !dados.cnpj) {
-    throw new Error('CNPJ é obrigatório para clientes Pessoa Jurídica.');
+    erros.push('CNPJ é obrigatório para clientes Pessoa Jurídica.');
+  }
+
+  // Validação do Enum OrigemCliente (se enviado)
+  if (dados.origemCliente) {
+    const origensValidas = ['INDICACAO', 'INSTAGRAM', 'GOOGLE', 'FACEBOOK', 'OUTROS'];
+    if (!origensValidas.includes(dados.origemCliente)) {
+      erros.push(`Origem do cliente inválida. Valores permitidos: ${origensValidas.join(', ')}`);
+    }
+  }
+
+  if (erros.length > 0) {
+    throw new Error(`Validação falhou: ${erros.join('; ')}`);
   }
 
   return repo.criarCliente(dados);

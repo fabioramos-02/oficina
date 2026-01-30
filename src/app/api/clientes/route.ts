@@ -60,8 +60,8 @@ export async function GET() {
  *               cnpj:
  *                 type: string
  *               origemCliente:
-*                 type: string
-*                 enum: [INDICACAO, INSTAGRAM, GOOGLE, FACEBOOK, OUTROS]
+ *                 type: string
+ *                 enum: [INDICACAO, INSTAGRAM, GOOGLE, FACEBOOK, OUTROS]
 *               telefone:
  *                 type: string
  *               telefoneExtra:
@@ -105,9 +105,24 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log('[POST /api/clientes] Payload recebido:', JSON.stringify(body, null, 2));
+
     const novoCliente = await criarNovoCliente(body);
     return NextResponse.json(novoCliente, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ erro: error.message }, { status: 400 });
+    console.error('[POST /api/clientes] Erro:', error);
+    
+    // Tenta extrair detalhes de erro se for um erro conhecido ou Zod/Prisma
+    const errorDetails = error.message || 'Erro desconhecido ao criar cliente';
+    const stack = error.stack;
+
+    return NextResponse.json(
+      { 
+        erro: 'Dados inválidos', 
+        detalhes: errorDetails,
+        stack: process.env.NODE_ENV === 'development' ? stack : undefined 
+      }, 
+      { status: 400 }
+    );
   }
 }
