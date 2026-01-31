@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma';
-import { OrdemServico, Prisma } from '@prisma/client';
+import { OrdemServico, Prisma, StatusOrdemServico } from '@prisma/client';
 
 export async function criarOrdemServico(dados: Prisma.OrdemServicoCreateInput): Promise<OrdemServico> {
   return prisma.ordemServico.create({
@@ -7,20 +7,45 @@ export async function criarOrdemServico(dados: Prisma.OrdemServicoCreateInput): 
     include: {
       cliente: true,
       veiculo: true,
-      pecas: true,
-      servicos: true,
+      pecas: { include: { peca: true } },
+      servicos: { include: { servico: true } },
     },
   });
 }
 
-export async function listarOrdensServico(): Promise<OrdemServico[]> {
+export interface FiltrosOrdemServico {
+  status?: StatusOrdemServico;
+  busca?: string;
+}
+
+export async function listarOrdensServico(filtros?: FiltrosOrdemServico): Promise<OrdemServico[]> {
+  const where: Prisma.OrdemServicoWhereInput = {};
+
+  if (filtros?.status) {
+    where.status = filtros.status;
+  }
+
+  if (filtros?.busca) {
+    const termo = filtros.busca;
+    const numeroBusca = parseInt(termo);
+    
+    where.OR = [
+      { cliente: { nome: { contains: termo, mode: 'insensitive' } } },
+    ];
+    
+    if (!isNaN(numeroBusca)) {
+      where.OR.push({ numero: numeroBusca });
+    }
+  }
+
   return prisma.ordemServico.findMany({
+    where,
     include: {
       cliente: true,
       veiculo: true,
     },
     orderBy: {
-      dataInicio: 'desc',
+      dataCriacao: 'desc',
     },
   });
 }
@@ -31,16 +56,8 @@ export async function buscarOrdemServicoPorId(id: string): Promise<OrdemServico 
     include: {
       cliente: true,
       veiculo: true,
-      pecas: {
-        include: {
-          peca: true,
-        },
-      },
-      servicos: {
-        include: {
-          servico: true,
-        },
-      },
+      pecas: { include: { peca: true } },
+      servicos: { include: { servico: true } },
     },
   });
 }
@@ -52,6 +69,8 @@ export async function atualizarOrdemServico(id: string, dados: Prisma.OrdemServi
     include: {
       cliente: true,
       veiculo: true,
+      pecas: { include: { peca: true } },
+      servicos: { include: { servico: true } },
     },
   });
 }
@@ -60,4 +79,13 @@ export async function deletarOrdemServico(id: string): Promise<OrdemServico> {
   return prisma.ordemServico.delete({
     where: { id },
   });
+}
+
+export async function obterUltimoNumeroPorAno(ano: number): Promise<number> {
+  const ultimo = await prisma.ordemServico.findFirst({
+    where: { ano },
+    orderBy: { numero: 'desc' },
+    select: { numero: true },
+  });
+  return ultimo?.numero || 0;
 }

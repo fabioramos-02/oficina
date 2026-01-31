@@ -2,12 +2,23 @@ export type ClientType = 'PF' | 'PJ';
 
 export type OrigemCliente = 'INDICACAO' | 'INSTAGRAM' | 'GOOGLE' | 'FACEBOOK' | 'OUTROS';
 
+export interface Veiculo {
+  id: string;
+  placa: string;
+  marca: string;
+  modelo: string;
+  ano?: number | null;
+}
+
 export interface Client {
   id: string;
   nome: string;
   tipoCliente: ClientType;
   origemCliente?: OrigemCliente | null;
   
+  // Veiculos
+  veiculos?: Veiculo[];
+
   // Documentos
   cpf?: string | null;
   cnpj?: string | null;

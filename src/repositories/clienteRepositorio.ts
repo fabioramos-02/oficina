@@ -6,11 +6,23 @@ export async function criarCliente(dados: Prisma.ClienteCreateInput): Promise<Cl
 }
 
 export async function listarClientes(): Promise<Cliente[]> {
-  return prisma.cliente.findMany();
+  return prisma.cliente.findMany({
+    include: {
+      veiculos: true
+    },
+    orderBy: {
+      nome: 'asc'
+    }
+  });
 }
 
 export async function buscarClientePorId(id: string): Promise<Cliente | null> {
-  return prisma.cliente.findUnique({ where: { id } });
+  return prisma.cliente.findUnique({ 
+    where: { id },
+    include: {
+      veiculos: true
+    }
+  });
 }
 
 export async function atualizarCliente(id: string, dados: Prisma.ClienteUpdateInput): Promise<Cliente> {

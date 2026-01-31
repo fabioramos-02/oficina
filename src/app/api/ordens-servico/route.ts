@@ -1,15 +1,28 @@
 import { NextResponse } from 'next/server';
 import { criarNovaOrdemServico, obterTodasOrdensServico } from '@/services/ordemServicoServico';
+import { StatusOrdemServico } from '@prisma/client';
 
 /**
  * @swagger
  * /api/ordens-servico:
  *   get:
  *     summary: Lista todas as ordens de serviço
- *     description: Retorna todas as ordens de serviço cadastradas.
+ *     description: Retorna todas as ordens de serviço cadastradas, com filtros opcionais.
  *     tags: [Ordens de Serviço]
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [EM_ANDAMENTO, CONCLUIDO, CANCELADO]
+ *         description: Filtrar por status
+ *       - in: query
+ *         name: busca
+ *         schema:
+ *           type: string
+ *         description: Filtrar por nome do cliente ou número da OS
  *     responses:
  *       200:
  *         description: Lista de ordens de serviço.
@@ -24,9 +37,13 @@ import { criarNovaOrdemServico, obterTodasOrdensServico } from '@/services/ordem
  *       500:
  *         description: Erro interno.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const ordens = await obterTodasOrdensServico();
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status') as StatusOrdemServico | undefined;
+    const busca = searchParams.get('busca') || undefined;
+
+    const ordens = await obterTodasOrdensServico({ status, busca });
     return NextResponse.json(ordens);
   } catch (error: any) {
     return NextResponse.json({ erro: error.message }, { status: 500 });
@@ -38,7 +55,7 @@ export async function GET() {
  * /api/ordens-servico:
  *   post:
  *     summary: Cria uma nova ordem de serviço
- *     description: Abre uma nova OS para um cliente e veículo.
+ *     description: Abre uma nova OS com cálculo automático de totais e numeração sequencial.
  *     tags: [Ordens de Serviço]
  *     security:
  *       - BearerAuth: []
@@ -48,31 +65,41 @@ export async function GET() {
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cliente, veiculo]
+ *             required: [clienteId]
  *             properties:
- *               cliente:
- *                 type: object
- *                 properties:
- *                   connect:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         format: uuid
- *               veiculo:
- *                 type: object
- *                 properties:
- *                   connect:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         format: uuid
- *               valorTotal:
- *                 type: number
- *               status:
+ *               clienteId:
  *                 type: string
- *                 enum: [ABERTA, EM_ANDAMENTO, AGUARDANDO_PECA, FINALIZADA, CANCELADA]
+ *                 format: uuid
+ *               veiculoId:
+ *                 type: string
+ *                 format: uuid
+ *               observacoes:
+ *                 type: string
+ *               veiculoKm:
+ *                 type: number
+ *               veiculoCombustivel:
+ *                 type: string
+ *               itemsServicos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     servicoId: {type: string}
+ *                     quantidade: {type: number}
+ *                     precoUnitario: {type: number}
+ *               itemsPecas:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     pecaId: {type: string}
+ *                     quantidade: {type: number}
+ *                     precoUnitario: {type: number}
+ *               desconto:
+ *                 type: number
+ *               tipoDesconto:
+ *                 type: string
+ *                 enum: [VALOR, PORCENTAGEM]
  *     responses:
  *       201:
  *         description: OS criada com sucesso.
@@ -90,8 +117,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    // O body deve conter cliente: { connect: { id: ... } } e veiculo: { connect: { id: ... } }
-    // ou tratar isso no frontend/serviço
     const novaOS = await criarNovaOrdemServico(body);
     return NextResponse.json(novaOS, { status: 201 });
   } catch (error: any) {

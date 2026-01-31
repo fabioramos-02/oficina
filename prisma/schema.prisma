@@ -29,11 +29,14 @@ enum StatusLicenca {
 }
 
 enum StatusOrdemServico {
-  ABERTA
   EM_ANDAMENTO
-  AGUARDANDO_PECA
-  FINALIZADA
-  CANCELADA
+  CONCLUIDO
+  CANCELADO
+}
+
+enum TipoDesconto {
+  VALOR
+  PORCENTAGEM
 }
 
 enum FuncaoUsuario {
@@ -129,20 +132,39 @@ model Veiculo {
 }
 
 model OrdemServico {
-  id         String             @id @default(uuid())
-  status     StatusOrdemServico @default(ABERTA)
-  dataInicio DateTime           @default(now())
-  dataFim    DateTime?
-  valorTotal Float              @default(0.0)
+  id              String             @id @default(uuid())
+  numero          Int
+  ano             Int
+  status          StatusOrdemServico @default(EM_ANDAMENTO)
+  dataCriacao     DateTime           @default(now())
+  dataFinalizacao DateTime?
+  observacoes     String?
+
+  // Financials
+  valorServicos   Float              @default(0.0)
+  valorPecas      Float              @default(0.0)
+  valorSubtotal   Float              @default(0.0)
+  tipoDesconto    TipoDesconto       @default(VALOR)
+  desconto        Float              @default(0.0)
+  valorDesconto   Float              @default(0.0)
+  valorTotal      Float              @default(0.0)
   
-  clienteId  String
-  cliente    Cliente            @relation(fields: [clienteId], references: [id])
+  clienteId       String
+  cliente         Cliente            @relation(fields: [clienteId], references: [id])
   
-  veiculoId  String?
-  veiculo    Veiculo?           @relation(fields: [veiculoId], references: [id])
+  veiculoId       String?
+  veiculo         Veiculo?           @relation(fields: [veiculoId], references: [id])
   
-  pecas      OrdemServicoPeca[]
-  servicos   OrdemServicoServico[]
+  // Vehicle Snapshot
+  veiculoKm          Float?
+  veiculoCombustivel String?
+  defeitoRelatado    String?
+  veiculoObservacoes String?
+  
+  pecas           OrdemServicoPeca[]
+  servicos        OrdemServicoServico[]
+
+  @@unique([numero, ano])
 }
 
 model Peca {

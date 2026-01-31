@@ -48,7 +48,7 @@ export async function GET(request: Request, context: Contexto) {
  * /api/ordens-servico/{id}:
  *   put:
  *     summary: Atualiza uma ordem de serviço
- *     description: Atualiza os dados de uma OS existente.
+ *     description: Atualiza os dados de uma OS existente e recalcula totais se itens mudarem.
  *     tags: [Ordens de Serviço]
  *     security:
  *       - BearerAuth: []
@@ -66,14 +66,34 @@ export async function GET(request: Request, context: Contexto) {
  *           schema:
  *             type: object
  *             properties:
+ *               observacoes:
+ *                 type: string
+ *               veiculoKm:
+ *                 type: number
+ *               itemsServicos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     servicoId: {type: string}
+ *                     quantidade: {type: number}
+ *                     precoUnitario: {type: number}
+ *               itemsPecas:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     pecaId: {type: string}
+ *                     quantidade: {type: number}
+ *                     precoUnitario: {type: number}
+ *               desconto:
+ *                 type: number
+ *               tipoDesconto:
+ *                 type: string
+ *                 enum: [VALOR, PORCENTAGEM]
  *               status:
  *                 type: string
- *                 enum: [ABERTA, EM_ANDAMENTO, AGUARDANDO_PECA, FINALIZADA, CANCELADA]
- *               valorTotal:
- *                 type: number
- *               dataFim:
- *                 type: string
- *                 format: date-time
+ *                 enum: [EM_ANDAMENTO, CONCLUIDO, CANCELADO]
  *     responses:
  *       200:
  *         description: OS atualizada.
