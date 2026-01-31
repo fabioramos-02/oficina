@@ -56,7 +56,7 @@ function calcularTotais(dados: {
   return { valorServicos, valorPecas, valorSubtotal, valorDesconto, valorTotal };
 }
 
-export async function criarNovaOrdemServico(dados: DadosOrdemServicoInput): Promise<OrdemServico> {
+export async function criarNovaOrdemServico(dados: DadosOrdemServicoInput) {
   const ano = new Date().getFullYear();
   const ultimoNumero = await repo.obterUltimoNumeroPorAno(ano);
   const numero = ultimoNumero + 1;
@@ -96,17 +96,17 @@ export async function criarNovaOrdemServico(dados: DadosOrdemServicoInput): Prom
   return repo.criarOrdemServico(prismaData);
 }
 
-export async function obterTodasOrdensServico(filtros?: repo.FiltrosOrdemServico): Promise<OrdemServico[]> {
+export async function obterTodasOrdensServico(filtros?: repo.FiltrosOrdemServico) {
   return repo.listarOrdensServico(filtros);
 }
 
-export async function obterOrdemServicoPorId(id: string): Promise<OrdemServico | null> {
+export async function obterOrdemServicoPorId(id: string) {
   const os = await repo.buscarOrdemServicoPorId(id);
   if (!os) throw new Error('Ordem de Serviço não encontrada.');
   return os;
 }
 
-export async function atualizarStatusOrdemServico(id: string, status: StatusOrdemServico): Promise<OrdemServico> {
+export async function atualizarStatusOrdemServico(id: string, status: StatusOrdemServico) {
   const os = await repo.buscarOrdemServicoPorId(id);
   if (!os) throw new Error('OS não encontrada');
   
@@ -118,7 +118,7 @@ export async function atualizarStatusOrdemServico(id: string, status: StatusOrde
   return repo.atualizarOrdemServico(id, data);
 }
 
-export async function atualizarDadosOrdemServico(id: string, dados: Partial<DadosOrdemServicoInput>): Promise<OrdemServico> {
+export async function atualizarDadosOrdemServico(id: string, dados: Partial<DadosOrdemServicoInput>) {
   const os = await repo.buscarOrdemServicoPorId(id);
   if (!os) throw new Error('OS não encontrada');
   
@@ -184,6 +184,6 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
   return repo.atualizarOrdemServico(id, updateData);
 }
 
-export async function removerOrdemServico(id: string): Promise<OrdemServico> {
+export async function removerOrdemServico(id: string) {
   return repo.deletarOrdemServico(id);
 }

@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma';
 import { OrdemServico, Prisma, StatusOrdemServico } from '@prisma/client';
 
-export async function criarOrdemServico(dados: Prisma.OrdemServicoCreateInput): Promise<OrdemServico> {
+export async function criarOrdemServico(dados: Prisma.OrdemServicoCreateInput) {
   return prisma.ordemServico.create({
     data: dados,
     include: {
@@ -18,7 +18,7 @@ export interface FiltrosOrdemServico {
   busca?: string;
 }
 
-export async function listarOrdensServico(filtros?: FiltrosOrdemServico): Promise<OrdemServico[]> {
+export async function listarOrdensServico(filtros?: FiltrosOrdemServico) {
   const where: Prisma.OrdemServicoWhereInput = {};
 
   if (filtros?.status) {
@@ -43,6 +43,8 @@ export async function listarOrdensServico(filtros?: FiltrosOrdemServico): Promis
     include: {
       cliente: true,
       veiculo: true,
+      pecas: { include: { peca: true } },
+      servicos: { include: { servico: true } },
     },
     orderBy: {
       dataCriacao: 'desc',
@@ -50,7 +52,7 @@ export async function listarOrdensServico(filtros?: FiltrosOrdemServico): Promis
   });
 }
 
-export async function buscarOrdemServicoPorId(id: string): Promise<OrdemServico | null> {
+export async function buscarOrdemServicoPorId(id: string) {
   return prisma.ordemServico.findUnique({
     where: { id },
     include: {
@@ -62,7 +64,7 @@ export async function buscarOrdemServicoPorId(id: string): Promise<OrdemServico 
   });
 }
 
-export async function atualizarOrdemServico(id: string, dados: Prisma.OrdemServicoUpdateInput): Promise<OrdemServico> {
+export async function atualizarOrdemServico(id: string, dados: Prisma.OrdemServicoUpdateInput) {
   return prisma.ordemServico.update({
     where: { id },
     data: dados,

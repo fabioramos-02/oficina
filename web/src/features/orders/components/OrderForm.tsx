@@ -3,8 +3,9 @@ import { Plus, Trash2 } from 'lucide-react';
 import { clientService } from '../../clients/services/clientService';
 import { serviceService } from '../../services/services/serviceService';
 import { inventoryService } from '../../inventory/services/inventoryService';
+import { CurrencyInput } from '../../../shared/components/ui/CurrencyInput';
 import type { Order, OrderInput, ItemServicoInput, ItemPecaInput } from '../types';
-import { StatusOrdemServico, TipoDesconto } from '../types';
+import { TipoDesconto } from '../types';
 
 interface OrderFormProps {
   initialData?: Order;
@@ -20,7 +21,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialData, onSubmit, onC
   const [observacoes, setObservacoes] = useState(initialData?.observacoes || '');
   
   // Vehicle Details
-  const [veiculoKm, setVeiculoKm] = useState(initialData?.veiculoKm || 0);
+  const [veiculoKm, setVeiculoKm] = useState<string | number>(initialData?.veiculoKm || '');
   const [veiculoCombustivel, setVeiculoCombustivel] = useState(initialData?.veiculoCombustivel || '');
   const [defeitoRelatado, setDefeitoRelatado] = useState(initialData?.defeitoRelatado || '');
   const [veiculoObservacoes, setVeiculoObservacoes] = useState(initialData?.veiculoObservacoes || '');
@@ -120,7 +121,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialData, onSubmit, onC
       clienteId,
       veiculoId: veiculoId || undefined, // Send undefined if empty
       observacoes,
-      veiculoKm,
+      veiculoKm: veiculoKm ? Number(veiculoKm) : 0,
       veiculoCombustivel,
       defeitoRelatado,
       veiculoObservacoes,
@@ -196,7 +197,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialData, onSubmit, onC
             <input 
               type="number" 
               value={veiculoKm} 
-              onChange={e => setVeiculoKm(Number(e.target.value))}
+              onChange={e => setVeiculoKm(e.target.value)}
+              placeholder="0"
               style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
             />
           </div>
@@ -216,6 +218,14 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialData, onSubmit, onC
               value={defeitoRelatado} 
               onChange={e => setDefeitoRelatado(e.target.value)}
               style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
+            />
+          </div>
+          <div style={{ gridColumn: 'span 2' }}>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '4px' }}>Observações do Veículo</label>
+            <textarea 
+              value={veiculoObservacoes} 
+              onChange={e => setVeiculoObservacoes(e.target.value)}
+              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', minHeight: '60px' }}
             />
           </div>
         </div>
@@ -365,26 +375,44 @@ export const OrderForm: React.FC<OrderFormProps> = ({ initialData, onSubmit, onC
           <span>Subtotal:</span>
           <strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}</strong>
         </div>
+        
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-          <span>Desconto:</span>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <span style={{ marginRight: 'auto' }}>Desconto:</span>
+          
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
             <select 
               value={tipoDesconto} 
               onChange={e => setTipoDesconto(e.target.value as TipoDesconto)}
-              style={{ padding: '4px', borderRadius: '4px' }}
+              style={{ padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', height: '42px' }}
             >
               <option value={TipoDesconto.VALOR}>R$</option>
               <option value={TipoDesconto.PORCENTAGEM}>%</option>
             </select>
-            <input 
-              type="number" 
-              value={desconto} 
-              onChange={e => setDesconto(Number(e.target.value))}
-              style={{ width: '80px', padding: '4px', borderRadius: '4px' }}
-            />
+            
+            {tipoDesconto === TipoDesconto.VALOR ? (
+              <div style={{ width: '150px' }}>
+                <CurrencyInput 
+                  label=""
+                  value={desconto} 
+                  onChange={setDesconto}
+                  placeholder="0,00"
+                />
+              </div>
+            ) : (
+              <input 
+                type="number" 
+                value={desconto} 
+                onChange={e => setDesconto(Number(e.target.value))}
+                placeholder="0"
+                min="0"
+                max="100"
+                style={{ width: '150px', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', height: '42px' }}
+              />
+            )}
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: 'bold', marginTop: '8px', borderTop: '1px solid #D1D5DB', paddingTop: '8px' }}>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: 'bold', marginTop: '16px', borderTop: '1px solid #D1D5DB', paddingTop: '16px' }}>
           <span>Total:</span>
           <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</span>
         </div>

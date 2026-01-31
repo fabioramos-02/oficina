@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, Trash2, Search, Plus, FileText, Filter } from 'lucide-react';
-import type { Order, StatusOrdemServico } from '../types';
+import type { Order } from '../types';
 
 interface OrderListProps {
   orders: Order[];

@@ -46,7 +46,8 @@ export async function GET(request: Request) {
     const ordens = await obterTodasOrdensServico({ status, busca });
     return NextResponse.json(ordens);
   } catch (error: any) {
-    return NextResponse.json({ erro: error.message }, { status: 500 });
+    console.error('Erro ao listar ordens de serviço:', error);
+    return NextResponse.json({ erro: error.message, stack: error.stack }, { status: 500 });
   }
 }
 
@@ -117,9 +118,11 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log('Payload recebido:', JSON.stringify(body, null, 2));
     const novaOS = await criarNovaOrdemServico(body);
     return NextResponse.json(novaOS, { status: 201 });
   } catch (error: any) {
+    console.error('Erro ao criar ordem de serviço:', error);
     return NextResponse.json({ erro: error.message }, { status: 400 });
   }
 }

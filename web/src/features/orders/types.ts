@@ -1,13 +1,17 @@
-export enum StatusOrdemServico {
-  EM_ANDAMENTO = 'EM_ANDAMENTO',
-  CONCLUIDO = 'CONCLUIDO',
-  CANCELADO = 'CANCELADO'
-}
+export const StatusOrdemServico = {
+  EM_ANDAMENTO: 'EM_ANDAMENTO',
+  CONCLUIDO: 'CONCLUIDO',
+  CANCELADO: 'CANCELADO'
+} as const;
 
-export enum TipoDesconto {
-  VALOR = 'VALOR',
-  PORCENTAGEM = 'PORCENTAGEM'
-}
+export type StatusOrdemServico = typeof StatusOrdemServico[keyof typeof StatusOrdemServico];
+
+export const TipoDesconto = {
+  VALOR: 'VALOR',
+  PORCENTAGEM: 'PORCENTAGEM'
+} as const;
+
+export type TipoDesconto = typeof TipoDesconto[keyof typeof TipoDesconto];
 
 export interface ItemServicoInput {
   servicoId: string;

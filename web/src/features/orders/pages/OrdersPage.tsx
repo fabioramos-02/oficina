@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { orderService } from '../services/orderService';
 import type { Order, OrderInput } from '../types';
 import { OrderList } from '../components/OrderList';
@@ -9,6 +10,7 @@ import { MainLayout } from '../../../shared/layout/MainLayout';
 import { StatusOrdemServico } from '../types';
 
 export const OrdersPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +40,17 @@ export const OrdersPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (searchParams.get('new') === 'true') {
+      handleAdd();
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete('new');
+        return newParams;
+      }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
