@@ -25,6 +25,7 @@ export interface DadosOrdemServicoInput {
   desconto?: number;
   itemsServicos?: ItemServicoInput[];
   itemsPecas?: ItemPecaInput[];
+  status?: StatusOrdemServico;
 }
 
 function calcularTotais(dados: {
@@ -122,8 +123,16 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
   const os = await repo.buscarOrdemServicoPorId(id);
   if (!os) throw new Error('OS não encontrada');
   
-  if (os.status !== StatusOrdemServico.EM_ANDAMENTO) {
-      throw new Error('Apenas pedidos em andamento podem ser editados.');
+  if (os.status !== StatusOrdemServico.EM_ANDAMENTO && dados.status !== StatusOrdemServico.EM_ANDAMENTO) {
+      // Allow updates if transitioning status, or if status is not changing (e.g. just saving). 
+      // But if OS is already concluded/cancelled, and we are NOT reopening it, we should restrict edits?
+      // For now, let's allow editing status even if finished, but restrict other fields? 
+      // User requirement: "ter a opção de alterar o status dele".
+      
+      // If we want to strictly prevent editing finalized orders unless reopening:
+      // if (os.status !== StatusOrdemServico.EM_ANDAMENTO && (!dados.status || dados.status === os.status)) {
+      //    throw new Error('Apenas pedidos em andamento podem ser editados.');
+      // }
   }
 
   // Merge existing items with new ones? Or replace? 
@@ -139,7 +148,14 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
       veiculoObservacoes: dados.veiculoObservacoes,
       tipoDesconto: dados.tipoDesconto,
       desconto: dados.desconto,
+      status: dados.status,
   };
+
+  if (dados.status === StatusOrdemServico.CONCLUIDO && os.status !== StatusOrdemServico.CONCLUIDO) {
+      updateData.dataFinalizacao = new Date();
+  } else if (dados.status === StatusOrdemServico.EM_ANDAMENTO && os.status === StatusOrdemServico.CONCLUIDO) {
+      updateData.dataFinalizacao = null; // Reopening
+  }
 
   // If items or discount changed, recalculate totals.
   // We need to fetch current items if not provided to recalculate correctly?

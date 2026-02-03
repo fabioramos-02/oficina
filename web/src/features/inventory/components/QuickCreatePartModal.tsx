@@ -41,9 +41,10 @@ export const QuickCreatePartModal: React.FC<QuickCreatePartModalProps> = ({ isOp
       });
       onSuccess(newPart);
       handleClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Erro ao criar peça. Verifique se o código já existe.');
+      const msg = err.response?.data?.erro || 'Erro ao criar peça. Verifique se o código já existe.';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }

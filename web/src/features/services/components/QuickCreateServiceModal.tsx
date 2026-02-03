@@ -36,9 +36,10 @@ export const QuickCreateServiceModal: React.FC<QuickCreateServiceModalProps> = (
       });
       onSuccess(newService);
       handleClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Erro ao criar serviço');
+      const msg = err.response?.data?.erro || 'Erro ao criar serviço';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,8 @@
 export interface Peca {
   id: string;
   nome: string;
+  descricao?: string;
+  categoria?: string;
   codigo: string;
   precoCusto: number;
   precoVenda: number;
@@ -12,6 +14,8 @@ export interface Peca {
 
 export interface PecaInput {
   nome: string;
+  descricao?: string;
+  categoria?: string;
   codigo: string;
   precoCusto: number;
   precoVenda: number;

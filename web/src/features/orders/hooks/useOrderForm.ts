@@ -3,7 +3,7 @@ import { clientService } from '../../clients/services/clientService';
 import { serviceService } from '../../services/services/serviceService';
 import { inventoryService } from '../../inventory/services/inventoryService';
 import type { Order, OrderInput, ItemServicoInput, ItemPecaInput } from '../types';
-import { TipoDesconto } from '../types';
+import { TipoDesconto, StatusOrdemServico } from '../types';
 
 interface UseOrderFormProps {
   initialData?: Order;
@@ -15,6 +15,7 @@ export const useOrderForm = ({ initialData, onSubmit }: UseOrderFormProps) => {
   const [clienteId, setClienteId] = useState(initialData?.clienteId || '');
   const [veiculoId, setVeiculoId] = useState(initialData?.veiculoId || '');
   const [observacoes, setObservacoes] = useState(initialData?.observacoes || '');
+  const [status, setStatus] = useState<StatusOrdemServico>(initialData?.status || StatusOrdemServico.EM_ANDAMENTO);
   
   // Vehicle Details
   const [veiculoKm, setVeiculoKm] = useState<string | number>(initialData?.veiculoKm || '');
@@ -83,7 +84,7 @@ export const useOrderForm = ({ initialData, onSubmit }: UseOrderFormProps) => {
       itemsPecas,
       desconto,
       tipoDesconto,
-      status: initialData?.status
+      status
     });
   };
 
@@ -107,6 +108,7 @@ export const useOrderForm = ({ initialData, onSubmit }: UseOrderFormProps) => {
       itemsPecas, setItemsPecas,
       desconto, setDesconto,
       tipoDesconto, setTipoDesconto,
+      status, setStatus,
     },
     data: {
       clientes,

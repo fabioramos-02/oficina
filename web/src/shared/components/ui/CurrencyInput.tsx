@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react';
 
 interface CurrencyInputProps {
-  label: string;
+  label?: string;
   value: number;
   onChange: (value: number) => void;
   placeholder?: string;
   error?: string;
   required?: boolean;
+  style?: React.CSSProperties;
 }
 
 export const CurrencyInput: React.FC<CurrencyInputProps> = ({
@@ -15,7 +16,8 @@ export const CurrencyInput: React.FC<CurrencyInputProps> = ({
   onChange,
   placeholder = '0,00',
   error,
-  required
+  required,
+  style
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -64,7 +66,8 @@ export const CurrencyInput: React.FC<CurrencyInputProps> = ({
           backgroundColor: 'white',
           cursor: 'text',
           transition: 'all 0.2s ease',
-          boxShadow: isFocused ? '0 0 0 3px rgba(79, 70, 229, 0.1)' : 'none'
+          boxShadow: isFocused ? '0 0 0 3px rgba(79, 70, 229, 0.1)' : 'none',
+          ...style
         }}
       >
         <span style={{
