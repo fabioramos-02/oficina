@@ -215,3 +215,34 @@ model OrdemServicoServico {
   quantidade     Int
   precoUnitario  Float
 }
+
+model Oficina {
+  id                    String   @id @default(uuid())
+  nomeFantasia          String
+  razaoSocial           String
+  cnpj                  String   @unique
+  
+  // Endereço
+  enderecoRua           String
+  enderecoNumero        String
+  enderecoBairro        String
+  enderecoCidade        String
+  enderecoEstado        String
+  enderecoCep           String
+  
+  // Contato
+  telefone              String
+  email                 String
+  
+  // Redes Sociais
+  instagram             String?
+  facebook              String?
+  
+  // Outros
+  descricaoInstitucional String?
+  logoUrl               String?
+  responsavel           String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

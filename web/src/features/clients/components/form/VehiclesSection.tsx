@@ -8,7 +8,7 @@ interface VehiclesSectionProps {
   errors?: Partial<Record<string, string>>;
 }
 
-export const VehiclesSection: React.FC<VehiclesSectionProps> = ({ formData, onChange, errors }) => {
+export const VehiclesSection: React.FC<VehiclesSectionProps> = ({ formData, onChange }) => {
   const [newVehicle, setNewVehicle] = useState<Partial<Veiculo>>({
     placa: '',
     marca: '',

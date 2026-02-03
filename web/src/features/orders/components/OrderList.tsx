@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, Search, Plus, FileText, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Edit2, Trash2, Search, Plus, FileText, Filter, Printer } from 'lucide-react';
 import type { Order } from '../types';
 
 interface OrderListProps {
@@ -25,8 +26,13 @@ const statusLabels: Record<string, string> = {
 };
 
 export const OrderList: React.FC<OrderListProps> = ({ orders, onEdit, onDelete, onAdd, isLoading, onFilterStatus, onSearch }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
+
+  if (isLoading) {
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Carregando...</div>;
+  }
   
   // Handlers for local state to debounce or pass up
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,22 +51,6 @@ export const OrderList: React.FC<OrderListProps> = ({ orders, onEdit, onDelete, 
   const formatCurrency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('pt-BR');
   const formatOrderNumber = (num: number, year: number) => `${num.toString().padStart(3, '0')}-${year}`;
-
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-        <div className="spinner" style={{ 
-          width: '40px', 
-          height: '40px', 
-          border: '4px solid #f3f3f3', 
-          borderTop: '4px solid #3498db', 
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
 
   return (
     <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -204,6 +194,13 @@ export const OrderList: React.FC<OrderListProps> = ({ orders, onEdit, onDelete, 
                   </td>
                   <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                      <button
+                        onClick={() => navigate(`/pedidos/${order.id}/nota`)}
+                        style={{ padding: '6px', borderRadius: '4px', border: '1px solid #D1D5DB', backgroundColor: 'white', cursor: 'pointer', color: '#4B5563' }}
+                        title="Imprimir Nota"
+                      >
+                        <Printer size={16} />
+                      </button>
                       <button
                         onClick={() => onEdit(order)}
                         style={{ padding: '6px', borderRadius: '4px', border: '1px solid #D1D5DB', backgroundColor: 'white', cursor: 'pointer', color: '#4B5563' }}

@@ -8,7 +8,8 @@ import {
   DollarSign, 
   Wrench, 
   Package,
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../core/auth/useAuth';
 
@@ -30,6 +31,7 @@ export const Sidebar: React.FC = () => {
     { path: '/financeiro', label: 'Financeiro', icon: DollarSign },
     { path: '/servicos', label: 'Serviços', icon: Wrench },
     { path: '/estoque', label: 'Estoque', icon: Package },
+    { path: '/configuracoes/oficina', label: 'Configurações', icon: Settings },
   ];
 
   return (

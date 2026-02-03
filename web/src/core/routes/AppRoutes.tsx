@@ -11,6 +11,9 @@ import { ServicesPage } from '../../features/services/pages/ServicesPage';
 import { OrdersPage } from '../../features/orders/pages/OrdersPage';
 import { UnderConstructionPage } from '../../shared/pages/UnderConstructionPage';
 
+import { WorkshopSettingsPage } from '../../features/workshop/pages/WorkshopSettingsPage';
+import { InvoicePage } from '../../features/orders/pages/InvoicePage';
+
 export const AppRoutes: React.FC = () => {
   return (
     <AuthProvider>
@@ -18,6 +21,10 @@ export const AppRoutes: React.FC = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Print Route - No Main Layout if implemented that way, but here we can keep it inside or outside based on needs. 
+              InvoicePage handles its own full page view for print. */}
+          <Route path="/pedidos/:id/nota" element={<InvoicePage />} />
 
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
@@ -30,6 +37,9 @@ export const AppRoutes: React.FC = () => {
             <Route path="/financeiro" element={<UnderConstructionPage />} />
             <Route path="/servicos" element={<ServicesPage />} />
             <Route path="/estoque" element={<InventoryPage />} />
+            
+            {/* Settings */}
+            <Route path="/configuracoes/oficina" element={<WorkshopSettingsPage />} />
           </Route>
 
           {/* Fallback */}

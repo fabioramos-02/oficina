@@ -5,9 +5,10 @@ import { Sidebar } from './Sidebar';
 
 interface MainLayoutProps {
   children: ReactNode;
+  title?: string;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--background)' }}>
       {/* Sidebar - Visible on Desktop */}
@@ -35,7 +36,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           zIndex: 90 // Lower than sidebar if sidebar overlaps, but sidebar is side-by-side here
         }}>
           <h1 style={{ fontSize: '1.2rem', color: 'var(--primary)', fontWeight: 600 }}>
-            Sistema de Gestão
+            {title || 'Sistema de Gestão'}
           </h1>
           
           <div style={{ display: 'flex', gap: '1rem' }}>
