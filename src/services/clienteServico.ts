@@ -28,6 +28,26 @@ export async function criarNovoCliente(dados: Prisma.ClienteCreateInput): Promis
   // Preparação dos dados para salvar
   const dadosParaSalvar = { ...dados } as any;
 
+  // Trata array de veículos para o formato Prisma (Nested Write)
+  if (dadosParaSalvar.veiculos && Array.isArray(dadosParaSalvar.veiculos)) {
+    const veiculosList = dadosParaSalvar.veiculos;
+    delete dadosParaSalvar.veiculos; // Remove o array cru
+    
+    // Filtra veículos vazios se houver
+    const veiculosValidos = veiculosList.filter((v: any) => v.placa && v.modelo && v.marca && v.ano);
+
+    if (veiculosValidos.length > 0) {
+      dadosParaSalvar.veiculos = {
+        create: veiculosValidos.map((v: any) => ({
+          placa: v.placa,
+          marca: v.marca,
+          modelo: v.modelo,
+          ano: Number(v.ano)
+        }))
+      };
+    }
+  }
+
   // Converter dataNascimento de string (YYYY-MM-DD) para Date ISO
   if (dadosParaSalvar.dataNascimento && typeof dadosParaSalvar.dataNascimento === 'string') {
     const dataStr = dadosParaSalvar.dataNascimento.includes('T')
@@ -59,6 +79,40 @@ export async function obterClientePorId(id: string): Promise<Cliente | null> {
 export async function atualizarDadosCliente(id: string, dados: Prisma.ClienteUpdateInput): Promise<Cliente> {
   // Preparação dos dados para atualizar
   const dadosParaSalvar = { ...dados } as any;
+
+  // Trata array de veículos para o formato Prisma (Nested Update)
+  if (dadosParaSalvar.veiculos && Array.isArray(dadosParaSalvar.veiculos)) {
+    const veiculosList = dadosParaSalvar.veiculos;
+    delete dadosParaSalvar.veiculos; // Remove o array cru
+
+    // Filtra veículos vazios
+    const veiculosValidos = veiculosList.filter((v: any) => v.placa && v.modelo && v.marca && v.ano);
+    const idsToKeep = veiculosValidos.filter((v: any) => v.id).map((v: any) => v.id);
+    
+    dadosParaSalvar.veiculos = {
+      // Deleta veículos que não estão na lista (que foram removidos no frontend)
+      deleteMany: {
+        id: { notIn: idsToKeep }
+      },
+      // Cria novos veículos (sem ID)
+      create: veiculosValidos.filter((v: any) => !v.id).map((v: any) => ({
+        placa: v.placa,
+        marca: v.marca,
+        modelo: v.modelo,
+        ano: Number(v.ano)
+      })),
+      // Atualiza veículos existentes (com ID)
+      update: veiculosValidos.filter((v: any) => v.id).map((v: any) => ({
+        where: { id: v.id },
+        data: {
+          placa: v.placa,
+          marca: v.marca,
+          modelo: v.modelo,
+          ano: Number(v.ano)
+        }
+      }))
+    };
+  }
 
   // Converter dataNascimento de string (YYYY-MM-DD) para Date ISO
   if (dadosParaSalvar.dataNascimento && typeof dadosParaSalvar.dataNascimento === 'string') {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Client, ClientInput } from '../types';
 import { BasicInfoSection } from './form/BasicInfoSection';
 import { IdentificationSection } from './form/IdentificationSection';
+import { VehiclesSection } from './form/VehiclesSection';
 import { ContactSection } from './form/ContactSection';
 import { AddressSection } from './form/AddressSection';
 import { AdditionalInfoSection } from './form/AdditionalInfoSection';
@@ -32,6 +33,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
     estado: '',
     dataNascimento: '',
     anotacoes: '',
+    veiculos: [],
     // Manter compatibilidade com campo antigo se necessário, ou ignorar
     endereco: '' 
   });
@@ -58,6 +60,7 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
         estado: initialData.estado || '',
         dataNascimento: initialData.dataNascimento ? new Date(initialData.dataNascimento).toISOString().split('T')[0] : '',
         anotacoes: initialData.anotacoes || '',
+        veiculos: initialData.veiculos || [],
         endereco: initialData.endereco || '' // Legacy
       });
     }
@@ -115,6 +118,10 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
     }
   };
 
+  const handleVehiclesChange = (veiculos: any[]) => {
+    setFormData(prev => ({ ...prev, veiculos }));
+  };
+
   return (
     <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       
@@ -122,6 +129,8 @@ export const ClientForm: React.FC<ClientFormProps> = ({ initialData, onSubmit, o
       
       <IdentificationSection formData={formData} handleChange={handleChange} errors={errors} />
       
+      <VehiclesSection formData={formData} onChange={handleVehiclesChange} />
+
       <ContactSection formData={formData} handleChange={handleChange} errors={errors} />
       
       <AddressSection formData={formData} handleChange={handleChange} />

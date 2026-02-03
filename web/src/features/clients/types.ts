@@ -7,7 +7,7 @@ export interface Veiculo {
   placa: string;
   marca: string;
   modelo: string;
-  ano?: number | null;
+  ano: number;
 }
 
 export interface Client {
@@ -51,6 +51,8 @@ export interface ClientInput {
   tipoCliente: ClientType;
   origemCliente?: OrigemCliente;
   
+  veiculos?: Partial<Veiculo>[];
+
   cpf?: string;
   cnpj?: string;
   

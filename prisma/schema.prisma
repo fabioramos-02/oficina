@@ -123,7 +123,7 @@ model Veiculo {
   placa         String         @unique
   marca         String
   modelo        String
-  ano           Int?
+  ano           Int
   
   clienteId     String
   cliente       Cliente        @relation(fields: [clienteId], references: [id])
@@ -170,6 +170,8 @@ model OrdemServico {
 model Peca {
   id                String             @id @default(uuid())
   nome              String
+  descricao         String?
+  categoria         String?
   codigo            String             @unique
   precoCusto        Float
   precoVenda        Float
@@ -181,6 +183,8 @@ model Peca {
 model Servico {
   id            String                @id @default(uuid())
   nome          String
+  descricao     String?
+  categoria     String?
   preco         Float
   
   ordensServico OrdemServicoServico[]
