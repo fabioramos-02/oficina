@@ -70,3 +70,20 @@ export async function removerPeca(id: string): Promise<Peca> {
   
   return repo.deletarPeca(id);
 }
+
+// Métodos de Controle de Estoque
+
+export async function verificarDisponibilidadeEstoque(pecaId: string, quantidadeRequerida: number): Promise<void> {
+  const peca = await repo.buscarPecaPorId(pecaId);
+  if (!peca) throw new Error(`Peça ID ${pecaId} não encontrada.`);
+  if (peca.quantidadeEstoque < quantidadeRequerida) {
+    throw new Error(`Estoque insuficiente para a peça '${peca.nome}'. Disponível: ${peca.quantidadeEstoque}, Solicitado: ${quantidadeRequerida}`);
+  }
+}
+
+export async function atualizarEstoque(pecaId: string, quantidadeDelta: number): Promise<void> {
+  // quantidadeDelta: negativo para saída (venda), positivo para entrada (devolução/compra)
+  await repo.atualizarPeca(pecaId, {
+    quantidadeEstoque: { increment: quantidadeDelta }
+  });
+}

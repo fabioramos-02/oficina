@@ -1,4 +1,5 @@
 import * as repo from '../repositories/ordemServicoRepositorio';
+import * as pecaService from './pecaServico';
 import { OrdemServico, Prisma, StatusOrdemServico, TipoDesconto } from '@prisma/client';
 
 export interface ItemServicoInput {
@@ -58,6 +59,13 @@ function calcularTotais(dados: {
 }
 
 export async function criarNovaOrdemServico(dados: DadosOrdemServicoInput) {
+  // 1. Validação de Estoque
+  if (dados.itemsPecas && dados.itemsPecas.length > 0) {
+    for (const item of dados.itemsPecas) {
+      await pecaService.verificarDisponibilidadeEstoque(item.pecaId, item.quantidade);
+    }
+  }
+
   const ano = new Date().getFullYear();
   const ultimoNumero = await repo.obterUltimoNumeroPorAno(ano);
   const numero = ultimoNumero + 1;
@@ -94,7 +102,22 @@ export async function criarNovaOrdemServico(dados: DadosOrdemServicoInput) {
     }
   };
 
-  return repo.criarOrdemServico(prismaData);
+  const novaOS = await repo.criarOrdemServico(prismaData);
+
+  // 2. Atualização de Estoque (Baixa)
+  if (dados.itemsPecas && dados.itemsPecas.length > 0) {
+    try {
+      for (const item of dados.itemsPecas) {
+        await pecaService.atualizarEstoque(item.pecaId, -item.quantidade);
+      }
+    } catch (error) {
+      console.error('Erro ao baixar estoque após criar OS:', error);
+      // Aqui idealmente reverteríamos a criação da OS ou alertaríamos admin.
+      // Como não temos transação distribuída fácil, vamos apenas logar por enquanto.
+    }
+  }
+
+  return novaOS;
 }
 
 export async function obterTodasOrdensServico(filtros?: repo.FiltrosOrdemServico) {
@@ -128,18 +151,38 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
       // But if OS is already concluded/cancelled, and we are NOT reopening it, we should restrict edits?
       // For now, let's allow editing status even if finished, but restrict other fields? 
       // User requirement: "ter a opção de alterar o status dele".
-      
-      // If we want to strictly prevent editing finalized orders unless reopening:
-      // if (os.status !== StatusOrdemServico.EM_ANDAMENTO && (!dados.status || dados.status === os.status)) {
-      //    throw new Error('Apenas pedidos em andamento podem ser editados.');
-      // }
   }
 
-  // Merge existing items with new ones? Or replace? 
-  // For simplicity in this "edit" logic, we might need to delete existing relations and recreate if items are passed.
-  // Prisma `update` with `set` or `deleteMany` + `create`.
-  
-  // To keep it simple: If items are passed, we replace them.
+  // Lógica de Estoque para Atualização
+  if (dados.itemsPecas) {
+    // Calcular Deltas
+    const pecasAtuais = os.pecas;
+    const pecasNovas = dados.itemsPecas;
+    
+    const mapaPecas = new Map<string, number>();
+
+    // Subtrai o que já foi usado (será "devolvido" logicamente no calculo do delta)
+    pecasAtuais.forEach(p => {
+      const qtd = mapaPecas.get(p.pecaId) || 0;
+      mapaPecas.set(p.pecaId, qtd - p.quantidadeUtilizada);
+    });
+
+    // Adiciona o que será usado
+    pecasNovas.forEach(p => {
+      const qtd = mapaPecas.get(p.pecaId) || 0;
+      mapaPecas.set(p.pecaId, qtd + p.quantidade);
+    });
+
+    // Validar Estoque para aumentos (deltas positivos)
+    for (const [pecaId, delta] of mapaPecas.entries()) {
+      if (delta > 0) {
+        // Se delta > 0, significa que o consumo aumentou (ou nova peça entrou)
+        // Precisamos verificar se há estoque para esse aumento
+        await pecaService.verificarDisponibilidadeEstoque(pecaId, delta);
+      }
+    }
+  }
+
   const updateData: Prisma.OrdemServicoUpdateInput = {
       observacoes: dados.observacoes,
       veiculoKm: dados.veiculoKm,
@@ -157,11 +200,6 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
       updateData.dataFinalizacao = null; // Reopening
   }
 
-  // If items or discount changed, recalculate totals.
-  // We need to fetch current items if not provided to recalculate correctly?
-  // Or we assume the frontend sends the FULL state of items on save.
-  // Let's assume frontend sends full state if editing items.
-  
   if (dados.itemsServicos || dados.itemsPecas || dados.desconto !== undefined || dados.tipoDesconto !== undefined) {
       const currentItemsServicos = dados.itemsServicos || os.servicos.map(s => ({ servicoId: s.servicoId, quantidade: s.quantidade, precoUnitario: s.precoUnitario }));
       const currentItemsPecas = dados.itemsPecas || os.pecas.map(p => ({ pecaId: p.pecaId, quantidade: p.quantidadeUtilizada, precoUnitario: p.precoUnitarioUtilizado }));
@@ -197,9 +235,46 @@ export async function atualizarDadosOrdemServico(id: string, dados: Partial<Dado
       }
   }
 
-  return repo.atualizarOrdemServico(id, updateData);
+  const osAtualizada = await repo.atualizarOrdemServico(id, updateData);
+
+  // Aplicar Atualização de Estoque
+  if (dados.itemsPecas) {
+    const pecasAtuais = os.pecas;
+    const pecasNovas = dados.itemsPecas;
+    const mapaPecas = new Map<string, number>();
+
+    // Subtrai o que já foi usado (será "devolvido" logicamente no calculo do delta)
+    pecasAtuais.forEach(p => {
+      const qtd = mapaPecas.get(p.pecaId) || 0;
+      mapaPecas.set(p.pecaId, qtd - p.quantidadeUtilizada);
+    });
+
+    // Adiciona o que será usado
+    pecasNovas.forEach(p => {
+      const qtd = mapaPecas.get(p.pecaId) || 0;
+      mapaPecas.set(p.pecaId, qtd + p.quantidade);
+    });
+
+    for (const [pecaId, delta] of mapaPecas.entries()) {
+      if (delta !== 0) {
+        // Se delta > 0: consumiu mais, subtrai do estoque (-delta)
+        // Se delta < 0: consumiu menos (devolveu), soma ao estoque (-delta torna-se positivo)
+        await pecaService.atualizarEstoque(pecaId, -delta);
+      }
+    }
+  }
+
+  return osAtualizada;
 }
 
 export async function removerOrdemServico(id: string) {
+  // Antes de remover, devolver peças ao estoque
+  const os = await repo.buscarOrdemServicoPorId(id);
+  if (os && os.pecas.length > 0) {
+    for (const item of os.pecas) {
+      await pecaService.atualizarEstoque(item.pecaId, item.quantidadeUtilizada);
+    }
+  }
+
   return repo.deletarOrdemServico(id);
 }
