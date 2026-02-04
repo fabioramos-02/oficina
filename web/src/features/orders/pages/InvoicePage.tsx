@@ -91,7 +91,10 @@ export function InvoicePage() {
         <InvoiceHeader workshop={workshop} />
 
         {/* Nota Title Strip */}
-        <div className="bg-gray-300 py-2 px-4 mb-6 -mx-[15mm] pl-[15mm] mt-4">
+        <div 
+          className="bg-gray-300 py-2 px-4 mb-6 -mx-[15mm] pl-[15mm] mt-4"
+          style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+        >
           <h2 className="text-xl font-bold uppercase">
             Nota de serviço {String(order.numero).padStart(3, '0')}-{order.ano}
           </h2>

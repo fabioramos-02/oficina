@@ -13,7 +13,10 @@ export function InvoiceFooter({ workshop }: InvoiceFooterProps) {
     <div className="mt-auto font-arial text-black">
       {/* Payment Section */}
       <div className="mb-10">
-        <div className="bg-gray-100 py-1 px-2 mb-2">
+        <div 
+          className="bg-gray-200 py-1 px-2 mb-2"
+          style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+        >
           <h3 className="font-bold text-base">Pagamento</h3>
         </div>
         <div className="grid grid-cols-2 gap-8 text-xs px-2">
@@ -30,9 +33,9 @@ export function InvoiceFooter({ workshop }: InvoiceFooterProps) {
 
       {/* Signature Section */}
       <div className="text-center">
-        <p className="font-bold mb-8 text-sm">
-          {workshop.enderecoCidade}, {formatDate(new Date().toISOString())}
-        </p>
+       <br />
+       <br />
+
         
         <div className="flex flex-col items-center">
           <div className="w-[300px] border-t border-black mb-1"></div>

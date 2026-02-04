@@ -22,28 +22,38 @@ export function InvoiceTable({ title, items }: InvoiceTableProps) {
   return (
     <div className="mb-6 font-arial text-black">
       {/* Section Title Bar */}
-      <div className="bg-gray-100 py-1 px-2 mb-2">
+      <div 
+        className="bg-gray-200 py-1 px-2 mb-2"
+        style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+      >
         <h3 className="font-bold text-base">{title}</h3>
       </div>
 
       <table className="w-full text-xs">
-        <thead>
+        <thead 
+          className="bg-gray-100"
+          style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+        >
           <tr>
-            <th className="text-left py-1 font-bold w-[40%]">Descrição</th>
-            <th className="text-right py-1 font-bold">Unidade</th>
-            <th className="text-right py-1 font-bold">Preço unitário</th>
-            <th className="text-right py-1 font-bold">Qtd.</th>
-            <th className="text-right py-1 font-bold">Preço</th>
+            <th className="text-left py-1 px-2 font-bold w-[40%]">Descrição</th>
+            <th className="text-right py-1 px-2 font-bold">Unidade</th>
+            <th className="text-right py-1 px-2 font-bold">Preço unitário</th>
+            <th className="text-right py-1 px-2 font-bold">Qtd.</th>
+            <th className="text-right py-1 px-2 font-bold">Preço</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((item) => (
-            <tr key={item.id} className="border-b border-transparent">
-              <td className="py-2 font-bold">{item.description}</td>
-              <td className="text-right py-2">{item.unit}</td>
-              <td className="text-right py-2">{formatCurrency(item.unitPrice)}</td>
-              <td className="text-right py-2">{item.quantity}</td>
-              <td className="text-right py-2">{formatCurrency(item.total)}</td>
+          {items.map((item, index) => (
+            <tr 
+              key={item.id} 
+              className={`border-b border-gray-100 ${index % 2 !== 0 ? 'bg-gray-50' : ''}`}
+              style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+            >
+              <td className="py-2 px-2 font-bold">{item.description}</td>
+              <td className="text-right py-2 px-2">{item.unit}</td>
+              <td className="text-right py-2 px-2">{formatCurrency(item.unitPrice)}</td>
+              <td className="text-right py-2 px-2">{item.quantity}</td>
+              <td className="text-right py-2 px-2">{formatCurrency(item.total)}</td>
             </tr>
           ))}
         </tbody>

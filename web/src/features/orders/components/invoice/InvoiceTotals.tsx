@@ -27,7 +27,10 @@ export function InvoiceTotals({ servicesTotal, partsTotal, discount, total }: In
             <span>- {formatCurrency(discount)}</span>
           </div>
         )}
-        <div className="flex justify-between py-1 mt-1 bg-gray-200 px-2 font-bold">
+        <div 
+          className="flex justify-between py-1 mt-1 bg-gray-200 px-2 font-bold"
+          style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+        >
           <span>Total</span>
           <span>{formatCurrency(total)}</span>
         </div>

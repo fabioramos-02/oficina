@@ -57,7 +57,10 @@ export function InvoiceHeader({ workshop }: InvoiceHeaderProps) {
       {/* Right: Date & Contact */}
       <div className="text-right pt-2 min-w-[200px]">
         <div className="flex justify-end mb-3">
-          <div className="inline-flex items-center gap-2 bg-gray-50 px-2 py-1 border border-gray-200">
+          <div 
+            className="inline-flex items-center gap-2 bg-gray-50 px-2 py-1 border border-gray-200"
+            style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}
+          >
             <Calendar size={14} />
             <span className="font-bold text-sm">{formatDate(new Date().toISOString())}</span>
           </div>
