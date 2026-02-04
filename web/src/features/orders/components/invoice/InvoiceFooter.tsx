@@ -11,10 +11,12 @@ export function InvoiceFooter({ workshop }: InvoiceFooterProps) {
 
   return (
     <div className="mt-auto font-arial text-black">
-      {/* Pagamento */}
-      <div className="mb-12">
-        <h3 className="font-bold text-base mb-2 border-b border-gray-300 pb-1">Pagamento</h3>
-        <div className="grid grid-cols-2 gap-8 text-xs">
+      {/* Payment Section */}
+      <div className="mb-10">
+        <div className="bg-gray-100 py-1 px-2 mb-2">
+          <h3 className="font-bold text-base">Pagamento</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-8 text-xs px-2">
           <div>
             <p className="font-bold mb-1">Meios de pagamento</p>
             <p>Dinheiro, cartão de crédito, cartão de débito ou pix.</p>
@@ -26,7 +28,7 @@ export function InvoiceFooter({ workshop }: InvoiceFooterProps) {
         </div>
       </div>
 
-      {/* Assinatura */}
+      {/* Signature Section */}
       <div className="text-center">
         <p className="font-bold mb-8 text-sm">
           {workshop.enderecoCidade}, {formatDate(new Date().toISOString())}

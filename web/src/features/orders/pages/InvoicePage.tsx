@@ -6,7 +6,7 @@ import type { Order } from '../types';
 import type { Workshop } from '../../workshop/types';
 import { Printer, ArrowLeft } from 'lucide-react';
 
-// Invoice Components
+// Components
 import { InvoiceHeader } from '../components/invoice/InvoiceHeader';
 import { InvoiceTable } from '../components/invoice/InvoiceTable';
 import { InvoiceTotals } from '../components/invoice/InvoiceTotals';
@@ -43,15 +43,14 @@ export function InvoicePage() {
   if (!order || !workshop) return <div className="p-8 text-center text-red-500">Nota não encontrada.</div>;
 
   const handlePrint = () => {
-    document.title = `Nota de serviço n. ${String(order.numero).padStart(3, '0')}-${order.ano} ${order.cliente.nome} - ${order.veiculo?.modelo || 'Veiculo'}`;
+    document.title = `Nota_${order.numero}_${order.cliente.nome}`;
     window.print();
   };
 
-  // Prepare data for tables
   const serviceItems = order.servicos.map(s => ({
     id: s.id,
     description: s.servico.nome,
-    unit: '', // Serviços geralmente não têm unidade visual na nota, ou pode ser 'UN' se desejar
+    unit: '', 
     unitPrice: s.precoUnitario,
     quantity: s.quantidade,
     total: s.precoUnitario * s.quantidade
@@ -60,47 +59,47 @@ export function InvoicePage() {
   const partItems = order.pecas.map(p => ({
     id: p.id,
     description: p.peca.nome,
-    unit: '', // Pode ser preenchido se a peça tiver unidade no banco
+    unit: '', 
     unitPrice: p.precoUnitarioUtilizado,
     quantity: p.quantidadeUtilizada,
     total: p.precoUnitarioUtilizado * p.quantidadeUtilizada
   }));
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white font-sans text-gray-900">
-      {/* Toolbar - Hidden on Print */}
+    <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white font-arial">
+      {/* Toolbar */}
       <div className="max-w-[210mm] mx-auto mb-6 flex justify-between items-center print:hidden">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-gray-700 shadow-sm"
         >
           <ArrowLeft size={16} />
           Voltar
         </button>
         <button 
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm"
         >
           <Printer size={16} />
-          Imprimir / Salvar PDF
+          Imprimir
         </button>
       </div>
 
-      {/* Invoice Container - A4 Size - Strict Layout */}
-      <div className="max-w-[210mm] mx-auto bg-white p-[15mm] print:p-0 print:w-full print:max-w-none text-black shadow-none" style={{ fontFamily: 'Arial, sans-serif' }}>
+      {/* A4 Container */}
+      <div className="max-w-[210mm] mx-auto bg-white p-[15mm] print:p-0 print:w-full print:max-w-none shadow-lg print:shadow-none text-black">
         
         <InvoiceHeader workshop={workshop} />
 
-        {/* Invoice Title Strip */}
-        <div className="bg-gray-400 py-2 px-4 mb-6 print:bg-gray-400 -mx-[15mm] pl-[15mm]">
-          <h2 className="text-xl font-bold text-black uppercase">
+        {/* Nota Title Strip */}
+        <div className="bg-gray-300 py-2 px-4 mb-6 -mx-[15mm] pl-[15mm] mt-4">
+          <h2 className="text-xl font-bold uppercase">
             Nota de serviço {String(order.numero).padStart(3, '0')}-{order.ano}
           </h2>
         </div>
 
-        {/* Client Section */}
-        <div className="mb-8 pl-1">
-          <p className="text-sm text-black">
+        {/* Client */}
+        <div className="mb-6">
+          <p className="text-sm">
             <span className="font-bold">Cliente:</span> {order.cliente.nome}
             {order.veiculo && (
               <span className="font-bold"> - {order.veiculo.modelo} {order.veiculo.placa}</span>
@@ -119,7 +118,6 @@ export function InvoicePage() {
         />
 
         <InvoiceFooter workshop={workshop} />
-
       </div>
     </div>
   );

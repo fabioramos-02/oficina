@@ -11,8 +11,8 @@ export function InvoiceTotals({ servicesTotal, partsTotal, discount, total }: In
   };
 
   return (
-    <div className="flex justify-end mb-8 font-arial">
-      <div className="w-[250px] text-sm text-black">
+    <div className="flex justify-end mb-8 font-arial text-black">
+      <div className="w-[300px] text-sm">
         <div className="flex justify-between py-1">
           <span>Serviços</span>
           <span>{formatCurrency(servicesTotal)}</span>
@@ -27,7 +27,7 @@ export function InvoiceTotals({ servicesTotal, partsTotal, discount, total }: In
             <span>- {formatCurrency(discount)}</span>
           </div>
         )}
-        <div className="flex justify-between py-1 mt-1 bg-gray-200 font-bold px-1">
+        <div className="flex justify-between py-1 mt-1 bg-gray-200 px-2 font-bold">
           <span>Total</span>
           <span>{formatCurrency(total)}</span>
         </div>

@@ -1,3 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-arial: Arial, sans-serif;
+}
+
 :root {
   --primary: #4C3BCA;
   --primary-light: #6F61E8;
@@ -16,6 +22,7 @@
   --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Rest of the file... */
 * {
   box-sizing: border-box;
   margin: 0;
