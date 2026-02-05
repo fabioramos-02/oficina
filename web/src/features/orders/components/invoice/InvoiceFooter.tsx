@@ -5,10 +5,6 @@ interface InvoiceFooterProps {
 }
 
 export function InvoiceFooter({ workshop }: InvoiceFooterProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
   return (
     <div className="mt-auto font-arial text-black">
       {/* Payment Section */}

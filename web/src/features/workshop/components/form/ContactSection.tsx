@@ -1,5 +1,5 @@
 import type { UseFormRegister, FieldErrors } from 'react-hook-form';
-import { Globe, Phone, Mail, Instagram, Facebook } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import type { WorkshopSchema } from '../../schema';
 
 interface ContactSectionProps {
