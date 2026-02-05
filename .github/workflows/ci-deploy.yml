@@ -18,48 +18,9 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npx prisma validate
-  migrate:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm install
-      - run: npx prisma migrate deploy
-       
-         
-  deploy:
-    if: github.event_name != 'pull_request'
-    needs: migrate
-    runs-on: ubuntu-latest
-  
-  deploy_cli_backend:
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
     if: github.event_name != 'pull_request'
     needs: migrate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm install
-      - run: npx vercel --prod --confirm
-        
-         
-  deploy_cli_web:
-    if: github.event_name != 'pull_request'
-    needs: migrate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm install
-        working-directory: web
-      - run: npx vercel --prod --confirm
-        working-directory: web
-       
-         
