@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,25 +24,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
     }
 
-    // Create unique filename
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_'); // Sanitize
-    const filename = `${timestamp}-${originalName}`;
-    
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    try {
-        await mkdir(uploadDir, { recursive: true });
-    } catch (e) {
-        // Ignore if exists
-    }
-
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-
-    // Return URL relative to public (served by Next.js)
-    // Assuming Next.js is running on port 3000
-    const url = `/uploads/${filename}`;
+    // Generate a data URL to avoid filesystem writes in serverless environments
+    const mime = file.type || 'application/octet-stream';
+    const base64 = buffer.toString('base64');
+    const url = `data:${mime};base64,${base64}`;
 
     return NextResponse.json({ url });
   } catch (error) {
