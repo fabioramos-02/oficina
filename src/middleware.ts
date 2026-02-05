@@ -13,6 +13,20 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const method = request.method;
 
+  // Handle CORS preflight
+  if (method === 'OPTIONS' && path.startsWith('/api')) {
+    const origin = request.headers.get('origin') ?? '*';
+    const headers = new Headers({
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET,DELETE,PATCH,POST,PUT,OPTIONS',
+      'Access-Control-Allow-Headers':
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+      'Vary': 'Origin',
+    });
+    return new Response(null, { status: 204, headers });
+  }
+
   // Log da requisição
   console.log(`[REQ] ${method} ${path} - ${new Date().toISOString()}`);
 
