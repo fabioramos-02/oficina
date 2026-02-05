@@ -1,6 +1,9 @@
 import { createSwaggerSpec } from 'next-swagger-doc';
 
 export const getApiDocs = async () => {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
   const spec = createSwaggerSpec({
     apiFolder: 'src/app/api', // define where to look for the routes
     definition: {
@@ -12,8 +15,8 @@ export const getApiDocs = async () => {
       },
       servers: [
         {
-          url: 'http://localhost:3000',
-          description: 'Servidor de Desenvolvimento',
+          url: baseUrl,
+          description: 'Servidor',
         },
       ],
       components: {
